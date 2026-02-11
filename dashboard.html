@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purps Crypto - Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f0620 0%, #1a0033 50%, #0f0620 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      color: #fff;
+    }
+
+    .navbar {
+      background: rgba(15, 6, 32, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(139, 79, 191, 0.3);
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 8px 32px rgba(139, 79, 191, 0.1);
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .logo {
+      font-size: 26px;
+      color: #FF6B9D;
+      font-weight: 800;
+      text-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
+      letter-spacing: 2px;
+    }
+
+    .user-info {
+      color: #9B6BA8;
+      font-size: 14px;
+    }
+
+    .username {
+      color: #00D9FF;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .balance {
+      color: #4FBF8B;
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 5px;
+    }
+
+    .navbar-right {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      font-size: 13px;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-withdraw {
+      background: linear-gradient(135deg, #4FBF8B 0%, #2FA860 100%);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(79, 191, 139, 0.3);
+    }
+
+    .btn-withdraw:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(79, 191, 139, 0.5);
+    }
+
+    .btn-admin {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #000;
+      font-weight: 700;
+    }
+
+    .btn-admin:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-logout {
+      background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%);
+      color: #fff;
+    }
+
+    .btn-logout:hover {
+      transform: translateY(-2px);
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      background: linear-gradient(135deg, #FF6B9D, #00D9FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .coins-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .coin-card {
+      background: linear-gradient(135deg, rgba(139, 79, 191, 0.15) 0%, rgba(255, 107, 157, 0.1) 100%);
+      border: 1px solid rgba(139, 79, 191, 0.4);
+      border-radius: 16px;
+      padding: 25px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .coin-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 107, 157, 0.2) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .coin-card:hover {
+      border-color: #FF6B9D;
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(255, 107, 157, 0.2);
+    }
+
+    .coin-card:hover::before {
+      opacity: 1;
+    }
+
+    .coin-card > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    .coin-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .coin-name {
+      color: #FF6B9D;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .coin-price {
+      color: #00D9FF;
+      font-size: 24px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .coin-amount {
+      color: #9B6BA8;
+      font-size: 12px;
+    }
+
+    .coin-amount.owned {
+      color: #FFD700;
+      margin-top: 12px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, rgba(15, 6, 32, 0.95) 0%, rgba(26, 0, 51, 0.95) 100%);
+      border: 1px solid rgba(139, 79, 191, 0.4);
+      border-radius: 20px;
+      padding: 50px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 25px 65px rgba(139, 79, 191, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-title {
+      color: #FF6B9D;
+      font-size: 28px;
+      margin-bottom: 25px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .coin-details {
+      margin-bottom: 25px;
+      padding: 20px;
+      background: rgba(139, 79, 191, 0.15);
+      border-radius: 12px;
+      border: 1px solid rgba(139, 79, 191, 0.3);
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      color: #9B6BA8;
+    }
+
+    .detail-label {
+      font-weight: 600;
+    }
+
+    .detail-value {
+      color: #FF6B9D;
+      font-weight: 700;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    .btn-action {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+
+    .btn-buy {
+      background: linear-gradient(135deg, #4FBF8B 0%, #2FA860 100%);
+      color: #fff;
+    }
+
+    .btn-buy:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(79, 191, 139, 0.4);
+    }
+
+    .btn-sell {
+      background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%);
+      color: #fff;
+    }
+
+    .btn-sell:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
+    }
+
+    .btn-action:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-close {
+      background: rgba(139, 79, 191, 0.4);
+      color: #fff;
+    }
+
+    .btn-close:hover {
+      background: rgba(139, 79, 191, 0.6);
+    }
+
+    .message {
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      display: none;
+      font-weight: 600;
+    }
+
+    .message.success {
+      background: rgba(79, 191, 139, 0.2);
+      border: 1px solid #4FBF8B;
+      color: #4FBF8B;
+    }
+
+    .message.error {
+      background: rgba(255, 107, 157, 0.2);
+      border: 1px solid #FF6B9D;
+      color: #FF6B9D;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .withdrawal-form {
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(139, 79, 191, 0.15);
+      border-radius: 12px;
+      border: 1px solid rgba(139, 79, 191, 0.3);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-label {
+      display: block;
+      color: #FF6B9D;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px;
+      background: rgba(15, 6, 32, 0.8);
+      border: 1px solid rgba(139, 79, 191, 0.4);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .form-input::placeholder {
+      color: #9B6BA8;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #FF6B9D;
+      box-shadow: 0 0 15px rgba(255, 107, 157, 0.2);
+    }
+
+    .form-error {
+      color: #FF6B9D;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .form-error.show {
+      display: block;
+    }
+
+    .admin-panel {
+      display: none;
+    }
+
+    .admin-panel.active {
+      display: block;
+    }
+
+    .admin-section {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.05) 100%);
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+
+    .admin-title {
+      color: #FFD700;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .account-item {
+      background: rgba(139, 79, 191, 0.15);
+      border: 1px solid rgba(139, 79, 191, 0.4);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .account-info {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .account-user {
+      color: #FF6B9D;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .account-details {
+      color: #9B6BA8;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .account-balance {
+      color: #00D9FF;
+      font-weight: 700;
+      margin: 5px 0;
+    }
+
+    .add-balance-form {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .add-balance-input {
+      padding: 10px 12px;
+      background: rgba(15, 6, 32, 0.8);
+      border: 1px solid rgba(139, 79, 191, 0.4);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      width: 100px;
+    }
+
+    .add-balance-input::placeholder {
+      color: #9B6BA8;
+    }
+
+    .add-balance-input:focus {
+      outline: none;
+      border-color: #FF6B9D;
+    }
+
+    .btn-small {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12px;
+      transition: all 0.3s;
+    }
+
+    .btn-approve {
+      background: linear-gradient(135deg, #4FBF8B 0%, #2FA860 100%);
+      color: #fff;
+    }
+
+    .btn-approve:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-reject {
+      background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%);
+      color: #fff;
+    }
+
+    .btn-reject:hover {
+      transform: translateY(-2px);
+    }
+
+    .withdrawal-item {
+      background: rgba(139, 79, 191, 0.15);
+      border: 1px solid rgba(139, 79, 191, 0.4);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .withdrawal-user {
+      color: #FF6B9D;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .withdrawal-details {
+      color: #9B6BA8;
+      font-size: 12px;
+    }
+
+    .withdrawal-amount {
+      color: #00D9FF;
+      font-weight: 700;
+      margin: 5px 0;
+    }
+
+    .withdrawal-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .no-withdrawals {
+      text-align: center;
+      color: #9B6BA8;
+      padding: 20px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="navbar-left">
+      <div class="logo">💎 PURPS</div>
+      <div class="user-info">
+        <div class="username" id="username">Lade...</div>
+        <div class="balance" id="balance">0€</div>
+      </div>
+    </div>
+    <div class="navbar-right">
+      <button class="btn btn-withdraw" onclick="openWithdrawalModal()">💸 Auszahlung</button>
+      <button class="btn btn-admin" id="adminBtn" onclick="toggleAdminPanel()" style="display: none;">⚙️ Admin</button>
+      <button class="btn btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel">
+      <div class="admin-section">
+        <div class="admin-title">⚙️ Admin-Panel</div>
+        
+        <!-- Kontoübersicht -->
+        <h3 style="color: #FF6B9D; margin-bottom: 20px; font-size: 18px;">� Alle Konten</h3>
+        <div id="accountsList" style="max-height: 600px; overflow-y: auto; display: grid; gap: 15px;"></div>
+
+        <!-- Auszahlungen -->
+        <h3 style="color: #FF6B9D; margin-top: 40px; margin-bottom: 20px; font-size: 18px;">💸 Ausstehende Auszahlungen</h3>
+        <div id="withdrawalsList" class="no-withdrawals">Keine ausstehenden Auszahlungen</div>
+      </div>
+    </div>
+
+    <!-- Coins Grid -->
+    <h2>🪙 Verfügbare Coins</h2>
+    <div class="coins-grid" id="coinsGrid">
+      Lade Coins...
+    </div>
+  </div>
+
+  <!-- Coin Details Modal -->
+  <div id="coinModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-title" id="coinModalTitle">Coin Name</div>
+      <div id="coinModalMessage" class="message"></div>
+
+      <div class="coin-details">
+        <div class="detail-row">
+          <span class="detail-label">Aktueller Preis:</span>
+          <span class="detail-value" id="modalCoinPrice">0€</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Startpreis:</span>
+          <span class="detail-value" id="modalStartPrice">0€</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Dein Bestand:</span>
+          <span class="detail-value" id="modalUserAmount">0</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label" style="color: #4FBF8B;">Kaufpreis (<span id="buyPercent">+3%</span>):</span>
+          <span class="detail-value" id="modalBuyPrice">0€</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label" style="color: #FF6B9D;">Verkaufspreis (<span id="sellPercent">-4%</span>):</span>
+          <span class="detail-value" id="modalSellPrice">0€</span>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-action btn-buy" id="buyBtn" onclick="buyCoin()">💚 KAUFEN</button>
+        <button class="btn-action btn-sell" id="sellBtn" onclick="sellCoin()">💔 VERKAUFEN</button>
+        <button class="btn-action btn-close" onclick="closeModal()">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Withdrawal Modal -->
+  <div id="withdrawalModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-title">💸 Auszahlung anfordern</div>
+      <div id="withdrawalMessage" class="message"></div>
+
+      <div class="withdrawal-form">
+        <div class="form-group">
+          <label class="form-label">Betrag (€):</label>
+          <input type="number" id="withdrawAmount" class="form-input" placeholder="z.B. 100" min="0" step="0.01">
+          <div class="form-error" id="withdrawAmountError"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">IBAN:</label>
+          <input type="text" id="withdrawIban" class="form-input" placeholder="89370400440532013000">
+          <div class="form-error" id="withdrawIbanError"></div>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+          <button class="btn-action btn-buy" style="flex: 1;" onclick="submitWithdrawal()">Auszahlung anfordern</button>
+          <button class="btn-action btn-close" style="flex: 1;" onclick="closeWithdrawalModal()">Abbrechen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentCoinId = null;
+
+    function getPriceMultipliers(startPrice) {
+      // 3-stellige (100€+): +4% Kauf, -5% Verkauf
+      // 2-stellige (10-99€): +2% Kauf, -3% Verkauf
+      
+      if (startPrice >= 100) {
+        return { buy: 1.04, sell: 0.95, buyPercent: '+4%', sellPercent: '-5%' };
+      } else {
+        // 2-stellige (10-99)
+        return { buy: 1.02, sell: 0.97, buyPercent: '+2%', sellPercent: '-3%' };
+      }
+    }
+
+    async function loadUserInfo() {
+      try {
+        const response = await fetch('/api/user');
+        const data = await response.json();
+        document.getElementById('username').textContent = data.username;
+        document.getElementById('balance').textContent = data.balance.toFixed(2) + '€';
+        
+        // Zeige Admin-Button wenn Admin
+        if (data.is_admin) {
+          document.getElementById('adminBtn').style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Fehler beim Laden der Benutzerinformationen:', error);
+      }
+    }
+
+    async function loadCoins() {
+      try {
+        console.log('Loading coins...');
+        const response = await fetch('/api/coins');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const coins = await response.json();
+        console.log('Coins loaded:', coins);
+        
+        const grid = document.getElementById('coinsGrid');
+        if (!grid) {
+          console.error('coinsGrid element not found');
+          return;
+        }
+        
+        if (!coins || coins.length === 0) {
+          grid.innerHTML = '<div class="no-withdrawals">Keine Coins verfügbar</div>';
+          return;
+        }
+        
+        grid.innerHTML = '';
+
+        coins.forEach(coin => {
+          const card = document.createElement('div');
+          card.className = 'coin-card';
+          card.innerHTML = `
+            <div class="coin-icon">💎</div>
+            <div class="coin-name">${coin.name}</div>
+            <div class="coin-price" id="price-${coin.id}">${coin.current_price.toFixed(2)}€</div>
+            <div class="coin-amount">Startpreis: ${coin.start_price}€</div>
+            <div class="coin-amount owned" id="amount-${coin.id}">Du hast: 0</div>
+          `;
+          card.onclick = () => openCoinModal(coin.id, coin);
+          grid.appendChild(card);
+        });
+
+        // Lade Portfolio-Informationen
+        coins.forEach(coin => {
+          fetch(`/api/coin/${coin.id}`)
+            .then(r => r.json())
+            .then(data => {
+              const amountEl = document.getElementById(`amount-${coin.id}`);
+              if (amountEl) {
+                amountEl.textContent = `Du hast: ${data.userAmount}`;
+              }
+            })
+            .catch(err => console.error('Error loading coin amount:', err));
+        });
+        
+        console.log('Coins rendered successfully');
+      } catch (error) {
+        console.error('Fehler beim Laden der Coins:', error);
+        const grid = document.getElementById('coinsGrid');
+        if (grid) {
+          grid.innerHTML = `<div class="no-withdrawals">Fehler beim Laden der Coins: ${error.message}</div>`;
+        }
+      }
+    }
+
+    async function updateCoinPrices() {
+      try {
+        const response = await fetch('/api/coins');
+        const coins = await response.json();
+
+        coins.forEach(coin => {
+          const priceEl = document.getElementById(`price-${coin.id}`);
+          if (priceEl) {
+            priceEl.textContent = coin.current_price.toFixed(2) + '€';
+          }
+        });
+      } catch (error) {
+        console.error('Fehler beim Aktualisieren der Preise:', error);
+      }
+    }
+
+    async function openCoinModal(coinId, coin) {
+      currentCoinId = coinId;
+      try {
+        const response = await fetch(`/api/coin/${coinId}`);
+        const data = await response.json();
+
+        document.getElementById('coinModalTitle').textContent = data.name;
+        document.getElementById('modalCoinPrice').textContent = data.current_price.toFixed(2) + '€';
+        document.getElementById('modalStartPrice').textContent = data.start_price + '€';
+        document.getElementById('modalUserAmount').textContent = data.userAmount;
+
+        const multipliers = getPriceMultipliers(data.start_price);
+        const buyPrice = data.current_price * multipliers.buy;
+        const sellPrice = data.current_price * multipliers.sell;
+
+        document.getElementById('modalBuyPrice').textContent = buyPrice.toFixed(2) + '€';
+        document.getElementById('modalSellPrice').textContent = sellPrice.toFixed(2) + '€';
+        document.getElementById('buyPercent').textContent = multipliers.buyPercent;
+        document.getElementById('sellPercent').textContent = multipliers.sellPercent;
+
+        // Deaktiviere Sell-Button wenn keine Coins vorhanden
+        document.getElementById('sellBtn').disabled = data.userAmount < 1;
+
+        document.getElementById('coinModal').classList.add('active');
+      } catch (error) {
+        console.error('Fehler beim Laden der Coin-Details:', error);
+      }
+    }
+
+    async function buyCoin() {
+      try {
+        const response = await fetch('/api/buy-coin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ coinId: currentCoinId })
+        });
+
+        const data = await response.json();
+        const msgEl = document.getElementById('coinModalMessage');
+
+        if (response.ok) {
+          msgEl.className = 'message success show';
+          msgEl.textContent = '✓ ' + data.message;
+          document.getElementById('balance').textContent = data.newBalance.toFixed(2) + '€';
+          
+          // Aktualisiere Preis im Modal
+          if (data.newPrice) {
+            const multipliers = getPriceMultipliers(data.startPrice);
+            const buyPrice = data.newPrice * multipliers.buy;
+            const sellPrice = data.newPrice * multipliers.sell;
+            document.getElementById('modalCoinPrice').textContent = data.newPrice.toFixed(2) + '€';
+            document.getElementById('modalBuyPrice').textContent = buyPrice.toFixed(2) + '€';
+            document.getElementById('modalSellPrice').textContent = sellPrice.toFixed(2) + '€';
+            document.getElementById('buyPercent').textContent = multipliers.buyPercent;
+            document.getElementById('sellPercent').textContent = multipliers.sellPercent;
+            
+            // Aktualisiere auch in der Grid
+            const priceEl = document.getElementById(`price-${currentCoinId}`);
+            if (priceEl) {
+              priceEl.textContent = data.newPrice.toFixed(2) + '€';
+            }
+          }
+          
+          // Lade Portfolio neu ohne Modal zu schließen
+          loadCoins();
+          
+          // Nachricht nach 2 Sekunden ausblenden
+          setTimeout(() => {
+            msgEl.className = 'message';
+            msgEl.textContent = '';
+          }, 2000);
+        } else {
+          msgEl.className = 'message error show';
+          msgEl.textContent = '✗ ' + data.error;
+        }
+      } catch (error) {
+        const msgEl = document.getElementById('coinModalMessage');
+        msgEl.className = 'message error show';
+        msgEl.textContent = '✗ Fehler: ' + error.message;
+      }
+    }
+
+    async function sellCoin() {
+      try {
+        const response = await fetch('/api/sell-coin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ coinId: currentCoinId })
+        });
+
+        const data = await response.json();
+        const msgEl = document.getElementById('coinModalMessage');
+
+        if (response.ok) {
+          msgEl.className = 'message success show';
+          msgEl.textContent = '✓ ' + data.message;
+          document.getElementById('balance').textContent = data.newBalance.toFixed(2) + '€';
+          
+          // Aktualisiere Preis im Modal
+          if (data.newPrice) {
+            const multipliers = getPriceMultipliers(data.startPrice);
+            const buyPrice = data.newPrice * multipliers.buy;
+            const sellPrice = data.newPrice * multipliers.sell;
+            document.getElementById('modalCoinPrice').textContent = data.newPrice.toFixed(2) + '€';
+            document.getElementById('modalBuyPrice').textContent = buyPrice.toFixed(2) + '€';
+            document.getElementById('modalSellPrice').textContent = sellPrice.toFixed(2) + '€';
+            document.getElementById('buyPercent').textContent = multipliers.buyPercent;
+            document.getElementById('sellPercent').textContent = multipliers.sellPercent;
+            
+            // Aktualisiere auch in der Grid
+            const priceEl = document.getElementById(`price-${currentCoinId}`);
+            if (priceEl) {
+              priceEl.textContent = data.newPrice.toFixed(2) + '€';
+            }
+          }
+          
+          // Lade Portfolio neu ohne Modal zu schließen
+          loadCoins();
+          
+          // Nachricht nach 2 Sekunden ausblenden
+          setTimeout(() => {
+            msgEl.className = 'message';
+            msgEl.textContent = '';
+          }, 2000);
+        } else {
+          msgEl.className = 'message error show';
+          msgEl.textContent = '✗ ' + data.error;
+        }
+      } catch (error) {
+        const msgEl = document.getElementById('coinModalMessage');
+        msgEl.className = 'message error show';
+        msgEl.textContent = '✗ Fehler: ' + error.message;
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('coinModal').classList.remove('active');
+    }
+
+    function openWithdrawalModal() {
+      document.getElementById('withdrawalMessage').className = 'message';
+      document.getElementById('withdrawalMessage').textContent = '';
+      document.getElementById('withdrawAmount').value = '';
+      document.getElementById('withdrawIban').value = '';
+      document.getElementById('withdrawalModal').classList.add('active');
+    }
+
+    function closeWithdrawalModal() {
+      document.getElementById('withdrawalModal').classList.remove('active');
+    }
+
+    async function submitWithdrawal() {
+      clearWithdrawalErrors();
+      const amount = parseFloat(document.getElementById('withdrawAmount').value);
+      const iban = document.getElementById('withdrawIban').value;
+
+      if (!amount || amount <= 0) {
+        showWithdrawalError('withdrawAmountError', 'Gültiger Betrag erforderlich');
+        return;
+      }
+
+      if (!iban) {
+        showWithdrawalError('withdrawIbanError', 'IBAN erforderlich');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/request-withdrawal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount, iban })
+        });
+
+        const data = await response.json();
+        const msgEl = document.getElementById('withdrawalMessage');
+
+        if (response.ok) {
+          msgEl.className = 'message success show';
+          msgEl.textContent = '✓ ' + data.message;
+          document.getElementById('balance').textContent = data.newBalance.toFixed(2) + '€';
+          setTimeout(() => {
+            closeWithdrawalModal();
+          }, 1500);
+        } else {
+          msgEl.className = 'message error show';
+          msgEl.textContent = '✗ ' + data.error;
+        }
+      } catch (error) {
+        const msgEl = document.getElementById('withdrawalMessage');
+        msgEl.className = 'message error show';
+        msgEl.textContent = '✗ Fehler: ' + error.message;
+      }
+    }
+
+    function showWithdrawalError(elementId, message) {
+      const element = document.getElementById(elementId);
+      element.textContent = message;
+      element.classList.add('show');
+    }
+
+    function clearWithdrawalErrors() {
+      document.querySelectorAll('.form-error').forEach(el => {
+        el.classList.remove('show');
+        el.textContent = '';
+      });
+    }
+
+    async function toggleAdminPanel() {
+      const panel = document.getElementById('adminPanel');
+      panel.classList.toggle('active');
+      if (panel.classList.contains('active')) {
+        loadAccounts();
+        loadWithdrawals();
+      }
+    }
+
+    async function loadAccounts() {
+      try {
+        const response = await fetch('/api/admin/accounts');
+        const accounts = await response.json();
+        const list = document.getElementById('accountsList');
+
+        if (!accounts || accounts.length === 0) {
+          list.innerHTML = '<div class="no-withdrawals">Keine Konten gefunden</div>';
+          return;
+        }
+
+        list.innerHTML = '';
+        accounts.forEach(account => {
+          const isAdmin = account.is_admin ? '✓ ADMIN' : '';
+          const coinsInfo = account.coins && account.coins.length > 0 
+            ? account.coins.map(c => `${c.name}: ${c.amount}`).join(', ')
+            : 'Keine Coins';
+          
+          const item = document.createElement('div');
+          item.className = 'account-item';
+          item.style.cssText = 'border-left: 4px solid ' + (account.is_admin ? '#4FBF8B' : '#FF6B9D') + ';';
+          item.innerHTML = `
+            <div class="account-info">
+              <div class="account-user">${account.username} ${isAdmin}</div>
+              <div class="account-details">
+                <div>Tel: ${account.phone}</div>
+                <div style="font-size: 12px; color: #9B6BA8; margin-top: 5px;">Coins: ${coinsInfo}</div>
+              </div>
+              <div class="account-balance">Balance: ${account.balance.toFixed(2)}€</div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+              <!-- Geld hinzufügen -->
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <input type="number" id="amount-add-${account.id}" class="add-balance-input" placeholder="Geld +" min="0" step="0.01" style="flex: 1;">
+                <button class="btn-small btn-approve" onclick="addBalance(${account.id})" title="Geld hinzufügen">+</button>
+              </div>
+              
+              <!-- Geld entfernen -->
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <input type="number" id="amount-remove-${account.id}" class="add-balance-input" placeholder="Geld -" min="0" step="0.01" style="flex: 1;">
+                <button class="btn-small" onclick="removeBalance(${account.id})" style="background: #FF6B9D; padding: 8px 12px; border: none; border-radius: 6px; color: white; cursor: pointer;" title="Geld entfernen">−</button>
+              </div>
+              
+              <!-- Passwort Reset -->
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <input type="text" id="password-${account.id}" class="add-balance-input" placeholder="Neues Passwort" style="flex: 1;">
+                <button class="btn-small" onclick="resetPassword(${account.id})" style="background: #8B4FBF; padding: 8px 12px; border: none; border-radius: 6px; color: white; cursor: pointer; flex: 1;" title="Passwort ändern">🔐 PW</button>
+              </div>
+              
+              <!-- Admin & Delete Buttons -->
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn-small" onclick="toggleAdmin(${account.id}, ${account.is_admin})" style="background: ${account.is_admin ? '#FF6B9D' : '#4FBF8B'}; padding: 8px 12px; border: none; border-radius: 6px; color: white; cursor: pointer; flex: 1;">${account.is_admin ? '👑 Admin entfernen' : '👑 Admin geben'}</button>
+                <button class="btn-small" onclick="deleteAccount(${account.id})" style="background: #EF4444; padding: 8px 12px; border: none; border-radius: 6px; color: white; cursor: pointer; flex: 1;">🗑️ Löschen</button>
+              </div>
+            </div>
+          `;
+          list.appendChild(item);
+        });
+      } catch (error) {
+        console.error('Fehler beim Laden der Konten:', error);
+      }
+    }
+
+    async function addBalance(userId) {
+      const amountInput = document.getElementById(`amount-add-${userId}`);
+      const amount = parseFloat(amountInput.value);
+
+      if (!amount || amount <= 0) {
+        alert('Gültigen Betrag eingeben!');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/admin/add-balance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, amount })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert('Guthaben hinzugefügt!');
+          amountInput.value = '';
+          loadAccounts();
+        } else {
+          alert('Fehler: ' + data.error);
+        }
+      } catch (error) {
+        alert('Fehler beim Hinzufügen: ' + error.message);
+      }
+    }
+
+    async function removeBalance(userId) {
+      const amountInput = document.getElementById(`amount-remove-${userId}`);
+      const amount = parseFloat(amountInput.value);
+
+      if (!amount || amount <= 0) {
+        alert('Gültigen Betrag eingeben!');
+        return;
+      }
+
+      if (!confirm('Sicher, dass du ' + amount + '€ entfernen möchtest?')) {
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/admin/remove-balance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, amount })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert('Guthaben entfernt!');
+          amountInput.value = '';
+          loadAccounts();
+        } else {
+          alert('Fehler: ' + data.error);
+        }
+      } catch (error) {
+        alert('Fehler beim Entfernen: ' + error.message);
+      }
+    }
+
+    async function toggleAdmin(userId, isCurrentlyAdmin) {
+      if (!confirm('Admin-Status ändern?')) {
+        return;
+      }
+
+      const endpoint = isCurrentlyAdmin ? `/api/admin/remove-admin/${userId}` : `/api/admin/make-admin/${userId}`;
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert(data.message);
+          loadAccounts();
+        } else {
+          alert('Fehler: ' + data.error);
+        }
+      } catch (error) {
+        alert('Fehler: ' + error.message);
+      }
+    }
+
+    async function deleteAccount(userId) {
+      if (!confirm('⚠️ Willst du dieses Konto WIRKLICH löschen? Diese Aktion ist nicht rückgängig zu machen!')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/admin/delete-account/${userId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert('Konto gelöscht!');
+          loadAccounts();
+        } else {
+          alert('Fehler: ' + data.error);
+        }
+      } catch (error) {
+        alert('Fehler: ' + error.message);
+      }
+    }
+
+    async function resetPassword(userId) {
+      const passwordInput = document.getElementById(`password-${userId}`);
+      const newPassword = passwordInput.value.trim();
+
+      if (!newPassword) {
+        alert('Passwort eingeben!');
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        alert('Passwort muss mindestens 6 Zeichen lang sein!');
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/admin/reset-password/${userId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: newPassword })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert('Passwort geändert!');
+          passwordInput.value = '';
+          loadAccounts();
+        } else {
+          alert('Fehler: ' + data.error);
+        }
+      } catch (error) {
+        alert('Fehler: ' + error.message);
+      }
+    }
+
+    async function loadWithdrawals() {
+      try {
+        const response = await fetch('/api/admin/withdrawals');
+        const withdrawals = await response.json();
+        const list = document.getElementById('withdrawalsList');
+
+        if (!withdrawals || withdrawals.length === 0) {
+          list.innerHTML = '<div class="no-withdrawals">Keine ausstehenden Auszahlungen</div>';
+          return;
+        }
+
+        list.innerHTML = '';
+        withdrawals.forEach(w => {
+          const item = document.createElement('div');
+          item.className = 'withdrawal-item';
+          item.innerHTML = `
+            <div>
+              <div class="withdrawal-user">${w.username}</div>
+              <div class="withdrawal-details">
+                IBAN: ${w.iban}
+              </div>
+              <div class="withdrawal-amount">${w.amount.toFixed(2)}€</div>
+            </div>
+            <div class="withdrawal-actions">
+              <button class="btn-small btn-approve" onclick="approveWithdrawal(${w.id})">✓ Genehmigen</button>
+              <button class="btn-small btn-reject" onclick="rejectWithdrawal(${w.id})">✗ Ablehnen</button>
+            </div>
+          `;
+          list.appendChild(item);
+        });
+      } catch (error) {
+        console.error('Fehler beim Laden der Auszahlungen:', error);
+      }
+    }
+
+    async function approveWithdrawal(withdrawalId) {
+      try {
+        const response = await fetch(`/api/admin/approve-withdrawal/${withdrawalId}`, { method: 'POST' });
+        const data = await response.json();
+        if (response.ok) {
+          loadWithdrawals();
+        }
+      } catch (error) {
+        console.error('Fehler beim Genehmigen:', error);
+      }
+    }
+
+    async function rejectWithdrawal(withdrawalId) {
+      try {
+        const response = await fetch(`/api/admin/reject-withdrawal/${withdrawalId}`, { method: 'POST' });
+        const data = await response.json();
+        if (response.ok) {
+          loadWithdrawals();
+        }
+      } catch (error) {
+        console.error('Fehler beim Ablehnen:', error);
+      }
+    }
+
+    async function logout() {
+      try {
+        await fetch('/api/logout', { method: 'POST' });
+        window.location.href = '/';
+      } catch (error) {
+        console.error('Fehler beim Logout:', error);
+      }
+    }
+
+    // Prüfe ob Admin
+    async function checkAdmin() {
+      try {
+        const response = await fetch('/api/user');
+        const data = await response.json();
+        if (data.is_admin === 1) {
+          document.getElementById('adminBtn').style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Fehler beim Überprüfen des Admin-Status:', error);
+      }
+    }
+
+    // Initialisierung
+    function initializeApp() {
+      console.log('App initializing...');
+      loadUserInfo();
+      loadCoins();
+      checkAdmin();
+      setInterval(loadUserInfo, 5000);
+      setInterval(loadCoins, 10000);
+      console.log('App initialized');
+    }
+    
+    // Starte auf verschiedene Weisen
+    document.addEventListener('DOMContentLoaded', initializeApp);
+    window.addEventListener('load', initializeApp);
+  </script>
+</body>
+</html>
