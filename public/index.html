@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purps Crypto - Login/Registrierung</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f0620 0%, #1a0033 50%, #0f0620 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .container {
+      background: linear-gradient(135deg, rgba(15, 6, 32, 0.95) 0%, rgba(26, 0, 51, 0.95) 100%);
+      border: 1px solid rgba(139, 79, 191, 0.4);
+      border-radius: 20px;
+      padding: 50px 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 25px 65px rgba(139, 79, 191, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      text-align: center;
+      color: #FF6B9D;
+      font-size: 32px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
+      letter-spacing: 2px;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #9B6BA8;
+      font-size: 14px;
+      margin-bottom: 30px;
+      font-style: italic;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      color: #FF6B9D;
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      background: rgba(50, 30, 80, 0.8);
+      border: 1px solid #8B4FBF;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    input::placeholder {
+      color: #9B6BA8;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #FF6B9D;
+      box-shadow: 0 0 15px rgba(255, 107, 157, 0.3);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .btn-login {
+      background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%);
+      color: #000;
+      font-weight: 700;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
+    }
+
+    .btn-register {
+      background: linear-gradient(135deg, #4FBF8B 0%, #2FA860 100%);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .btn-register:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(79, 191, 139, 0.4);
+    }
+
+    .error {
+      color: #FF6B9D;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .success {
+      color: #4FBF8B;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .success.show {
+      display: block;
+    }
+
+    .toggle-form {
+      text-align: center;
+      margin-top: 20px;
+      color: #9B6BA8;
+      font-size: 13px;
+    }
+
+    .toggle-form a {
+      color: #FF6B9D;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .toggle-form a:hover {
+      text-decoration: underline;
+    }
+
+    .form {
+      display: none;
+    }
+
+    .form.active {
+      display: block;
+    }
+
+    .form-title {
+      text-align: center;
+      color: #FF6B9D;
+      font-size: 20px;
+      margin-bottom: 25px;
+      font-weight: bold;
+    }
+
+    #loginForm {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>PURPS CRYPTO</h1>
+    <p class="subtitle">Authentifizierung erforderlich</p>
+
+    <!-- Login Form -->
+    <div id="loginForm" class="form active">
+      <div class="form-title">Anmelden</div>
+      <div class="form-group">
+        <label>👤 Benutzername:</label>
+        <input type="text" id="loginUsername" placeholder="Max Mustermann">
+        <div class="error" id="loginUsernameError"></div>
+      </div>
+
+      <div class="form-group">
+        <label>� 5-stellige Handynummer:</label>
+        <input type="text" id="loginPhone" placeholder="z. B. 12345">
+        <div class="error" id="loginPhoneError"></div>
+      </div>
+
+      <div class="form-group">
+        <label>�🔐 Passwort:</label>
+        <input type="password" id="loginPassword" placeholder="Gib dein Passwort ein">
+        <div class="error" id="loginPasswordError"></div>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-login" onclick="login()">ANMELDEN</button>
+        <button class="btn-register" onclick="toggleForm()">REGISTRIEREN</button>
+      </div>
+
+      <div class="toggle-form">
+        Noch kein Konto? <a onclick="toggleForm()">Jetzt registrieren</a>
+      </div>
+    </div>
+
+    <!-- Register Form -->
+    <div id="registerForm" class="form">
+      <div class="form-title">Registrieren</div>
+      <div class="form-group">
+        <label>👤 Benutzername:</label>
+        <input type="text" id="registerUsername" placeholder="Max Mustermann">
+        <div class="error" id="registerUsernameError"></div>
+      </div>
+
+      <div class="form-group">
+        <label>🔐 Passwort:</label>
+        <input type="password" id="registerPassword" placeholder="Gib dein Passwort ein">
+        <div class="error" id="registerPasswordError"></div>
+      </div>
+
+      <div class="form-group">
+        <label>📱 5-stellige Handynummer:</label>
+        <input type="text" id="registerPhone" placeholder="z. B. 12345">
+        <div class="error" id="registerPhoneError"></div>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-login" onclick="toggleForm()">ANMELDEN</button>
+        <button class="btn-register" onclick="register()">REGISTRIEREN</button>
+      </div>
+
+      <div class="success" id="registerSuccess">Registrierung erfolgreich! Du kannst dich jetzt anmelden.</div>
+      <div class="error" id="registerError"></div>
+
+      <div class="toggle-form">
+        Hast du bereits ein Konto? <a onclick="toggleForm()">Hier anmelden</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleForm() {
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+
+      loginForm.classList.toggle('active');
+      registerForm.classList.toggle('active');
+
+      // Fehler zurücksetzen
+      clearErrors();
+    }
+
+    function clearErrors() {
+      document.querySelectorAll('.error').forEach(el => {
+        el.classList.remove('show');
+        el.textContent = '';
+      });
+      document.querySelectorAll('.success').forEach(el => {
+        el.classList.remove('show');
+        el.textContent = '';
+      });
+    }
+
+    async function login() {
+      clearErrors();
+      const username = document.getElementById('loginUsername').value;
+      const phone = document.getElementById('loginPhone').value;
+      const password = document.getElementById('loginPassword').value;
+
+      if (!username) {
+        showError('loginUsernameError', 'Benutzername erforderlich');
+        return;
+      }
+      if (!phone) {
+        showError('loginPhoneError', 'Handynummer erforderlich');
+        return;
+      }
+      if (!password) {
+        showError('loginPasswordError', 'Passwort erforderlich');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, phone, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          window.location.href = '/dashboard';
+        } else {
+          showError('loginUsernameError', data.error || 'Login fehlgeschlagen');
+        }
+      } catch (error) {
+        showError('loginUsernameError', 'Fehler: ' + error.message);
+      }
+    }
+
+    async function register() {
+      clearErrors();
+      const username = document.getElementById('registerUsername').value;
+      const password = document.getElementById('registerPassword').value;
+      const phone = document.getElementById('registerPhone').value;
+
+      if (!username) {
+        showError('registerUsernameError', 'Benutzername erforderlich');
+        return;
+      }
+      if (!password) {
+        showError('registerPasswordError', 'Passwort erforderlich');
+        return;
+      }
+      if (!phone || !/^\d{5}$/.test(phone)) {
+        showError('registerPhoneError', 'Gültige 5-stellige Nummer erforderlich');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, phone })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          document.getElementById('registerSuccess').classList.add('show');
+          document.getElementById('registerSuccess').textContent = 'Registrierung erfolgreich! Du kannst dich jetzt anmelden.';
+          setTimeout(() => {
+            toggleForm();
+            document.getElementById('loginUsername').value = username;
+          }, 1500);
+        } else {
+          showError('registerUsernameError', data.error || 'Registrierung fehlgeschlagen');
+        }
+      } catch (error) {
+        showError('registerUsernameError', 'Fehler: ' + error.message);
+      }
+    }
+
+    function showError(elementId, message) {
+      const element = document.getElementById(elementId);
+      element.textContent = message;
+      element.classList.add('show');
+    }
+
+    // Enter-Taste unterstützen
+    document.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm.classList.contains('active')) {
+          login();
+        } else {
+          register();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
