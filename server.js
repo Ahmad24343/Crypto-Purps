@@ -689,7 +689,8 @@ app.post('/api/admin/reject-withdrawal/:withdrawalId', (req, res) => {
   );
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Purps Crypto Server läuft auf http://localhost:${PORT}`);
+  console.log(`Purps Crypto Server läuft auf Port ${PORT}`);
+  console.log(`URL: http://localhost:${PORT}`);
 });
