@@ -1,10 +1,11 @@
 const express = require('express');
 const session = require('express-session');
-const FileStore = require('session-file-store')(session);
+const MongoStore = require('connect-mongo');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const bodyParser = require('body-parser');
-const db = require('./database');
+const db = require('./database-mongodb');
+require('dotenv').config();
 
 const app = express();
 
@@ -14,14 +15,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Session-Konfiguration
-const fileStoreOptions = {
-  retries: 0,  // Keine Wiederholung bei Fehlern
-  ttl: 24 * 60 * 60
-};
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/crypto-purps';
 
 app.use(session({
-  store: new FileStore(fileStoreOptions),
-  secret: 'purps-crypto-secret-key',
+  store: MongoStore.create({
+    mongoUrl: mongoUri,
+    touchAfter: 24 * 3600
+  }),
+  secret: process.env.SESSION_SECRET || 'purps-crypto-secret-key',
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 24 * 60 * 60 * 1000, sameSite: 'lax' }
