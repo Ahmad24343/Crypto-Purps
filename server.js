@@ -2,12 +2,21 @@ const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const path = require('path');
 const bodyParser = require('body-parser');
-const db = require('./database-mongodb');
+
+// Choose between MongoDB or SQLite backend depending on environment
 require('dotenv').config();
+const useMongo = !!process.env.MONGODB_URI;
+const db = useMongo ? require('./database-mongodb') : require('./database');
+
 
 const app = express();
+
+function generateCryptoAddress() {
+  return '0x' + crypto.randomBytes(20).toString('hex');
+}
 
 // Middleware
 app.use(bodyParser.json());
@@ -17,16 +26,31 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Session-Konfiguration
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/crypto-purps';
 
-app.use(session({
-  store: MongoStore.create({
-    mongoUrl: mongoUri,
-    touchAfter: 24 * 3600
-  }),
+const sessionOptions = {
   secret: process.env.SESSION_SECRET || 'purps-crypto-secret-key',
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 24 * 60 * 60 * 1000, sameSite: 'lax' }
-}));
+};
+if (useMongo) {
+  sessionOptions.store = MongoStore.create({
+    mongoUrl: mongoUri,
+    touchAfter: 24 * 3600
+  });
+} else {
+  console.warn('MongoDB URI not set, using default memory session store.');
+}
+
+// use session parser instance so socket.io can access sessions
+const sessionParser = session(sessionOptions);
+app.use(sessionParser);
+
+// Ensure messages table exists for anonymous chat
+db.run(`CREATE TABLE IF NOT EXISTS messages (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  content TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+)`);
 
 // Routes
 app.get('/', (req, res) => {
@@ -53,15 +77,16 @@ app.post('/api/register', (req, res) => {
     return res.status(400).json({ error: 'Alle Felder sind erforderlich' });
   }
 
-  if (!/^\d{5}$/.test(phone)) {
-    return res.status(400).json({ error: 'Telefonnummer muss 5 Ziffern sein' });
+  if (!/^\d{5,15}$/.test(phone)) {
+    return res.status(400).json({ error: 'Telefonnummer muss zwischen 5 und 15 Ziffern lang sein' });
   }
 
   const hashedPassword = bcrypt.hashSync(password, 10);
+  const address = generateCryptoAddress();
 
   db.run(
-    `INSERT INTO users (username, password, phone) VALUES (?, ?, ?)`,
-    [username, hashedPassword, phone],
+    `INSERT INTO users (username, password, phone, address) VALUES (?, ?, ?, ?)`,
+    [username, hashedPassword, phone, address],
     (err) => {
       if (err) {
         if (err.message.includes('UNIQUE constraint failed')) {
@@ -115,13 +140,30 @@ app.get('/api/user', (req, res) => {
   }
 
   db.get(
-    `SELECT id, username, balance, is_admin FROM users WHERE id = ?`,
+    `SELECT id, address, balance, is_admin FROM users WHERE id = ?`,
     [req.session.userId],
     (err, user) => {
       if (err || !user) {
         return res.status(500).json({ error: 'Fehler beim Abrufen der Benutzerdaten' });
       }
-      res.json(user);
+
+      if (!user.address) {
+        const newAddress = generateCryptoAddress();
+        db.run(
+          `UPDATE users SET address = ? WHERE id = ?`,
+          [newAddress, user.id],
+          (updateErr) => {
+            if (updateErr) {
+              console.error('Error updating missing address:', updateErr);
+              return res.status(500).json({ error: 'Fehler beim Erzeugen der Wallet-Adresse' });
+            }
+            user.address = newAddress;
+            res.json(user);
+          }
+        );
+      } else {
+        res.json(user);
+      }
     }
   );
 });
@@ -164,37 +206,179 @@ app.get('/api/coin/:coinId', (req, res) => {
   );
 });
 
+// API: Portfolio abrufen
+app.get('/api/portfolio', (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'Nicht authentifiziert' });
+  }
+
+  db.all(
+    `SELECT c.id AS coin_id, c.name, c.current_price, p.amount,
+            (p.amount * c.current_price) AS value
+     FROM portfolio p
+     JOIN coins c ON p.coin_id = c.id
+     WHERE p.user_id = ? AND p.amount > 0
+     ORDER BY c.name ASC`,
+    [req.session.userId],
+    (err, portfolio) => {
+      if (err) {
+        return res.status(500).json({ error: 'Fehler beim Abrufen des Portfolios' });
+      }
+      res.json(portfolio || []);
+    }
+  );
+});
+
+// API: Geld oder Coins an andere Adresse überweisen
+app.post('/api/transfer', (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'Nicht authentifiziert' });
+  }
+
+  const { recipientAddress, amount, coinId } = req.body;
+  const value = parseFloat(amount);
+  const senderId = req.session.userId;
+
+  if (!recipientAddress || isNaN(value) || value <= 0) {
+    return res.status(400).json({ error: 'Ungültige Eingaben' });
+  }
+
+  db.get(`SELECT id FROM users WHERE address = ?`, [recipientAddress], (err, recipient) => {
+    if (err || !recipient) {
+      return res.status(400).json({ error: 'Empfängeradresse nicht gefunden' });
+    }
+
+    if (recipient.id === senderId) {
+      return res.status(400).json({ error: 'Du kannst nicht an dich selbst überweisen' });
+    }
+
+    if (coinId) {
+      const coinIdNumber = parseInt(coinId, 10);
+      if (isNaN(coinIdNumber)) {
+        return res.status(400).json({ error: 'Ungültiger Coin' });
+      }
+
+      db.get(`SELECT * FROM coins WHERE id = ?`, [coinIdNumber], (err, coin) => {
+        if (err || !coin) {
+          return res.status(404).json({ error: 'Coin nicht gefunden' });
+        }
+
+        db.get(
+          `SELECT amount FROM portfolio WHERE user_id = ? AND coin_id = ?`,
+          [senderId, coinIdNumber],
+          (err, portfolio) => {
+            if (err || !portfolio || portfolio.amount < value) {
+              return res.status(400).json({ error: 'Nicht genügend Coins im Portfolio' });
+            }
+
+            db.serialize(() => {
+              db.run('BEGIN TRANSACTION');
+              db.run(
+                `UPDATE portfolio SET amount = amount - ? WHERE user_id = ? AND coin_id = ?`,
+                [value, senderId, coinIdNumber]
+              );
+              db.run(
+                `INSERT OR IGNORE INTO portfolio (user_id, coin_id, amount) VALUES (?, ?, 0)`,
+                [recipient.id, coinIdNumber]
+              );
+              db.run(
+                `UPDATE portfolio SET amount = amount + ? WHERE user_id = ? AND coin_id = ?`,
+                [value, recipient.id, coinIdNumber]
+              );
+              db.run(
+                `INSERT INTO transactions (user_id, coin_id, type, amount, price, total) VALUES (?, ?, 'transfer-out', ?, 0, 0)`,
+                [senderId, coinIdNumber, value]
+              );
+              db.run(
+                `INSERT INTO transactions (user_id, coin_id, type, amount, price, total) VALUES (?, ?, 'transfer-in', ?, 0, 0)`,
+                [recipient.id, coinIdNumber, value]
+              );
+              db.run('COMMIT', (err) => {
+                if (err) {
+                  db.run('ROLLBACK');
+                  return res.status(500).json({ error: 'Fehler bei der Überweisung' });
+                }
+                res.json({ message: `Coin erfolgreich gesendet: ${coin.name}`, coinId: coinIdNumber, amount: value });
+              });
+            });
+          }
+        );
+      });
+      return;
+    }
+
+    db.get(`SELECT balance FROM users WHERE id = ?`, [senderId], (err, sender) => {
+      if (err || !sender) {
+        return res.status(500).json({ error: 'Benutzer nicht gefunden' });
+      }
+
+      if (sender.balance < value) {
+        return res.status(400).json({ error: 'Unzureichendes Guthaben' });
+      }
+
+      db.serialize(() => {
+        db.run('BEGIN TRANSACTION');
+        db.run(
+          `UPDATE users SET balance = balance - ? WHERE id = ?`,
+          [value, senderId]
+        );
+        db.run(
+          `UPDATE users SET balance = balance + ? WHERE id = ?`,
+          [value, recipient.id]
+        );
+        db.run(
+          `INSERT INTO transfers (sender_id, recipient_id, amount) VALUES (?, ?, ?)`,
+          [senderId, recipient.id, value]
+        );
+        db.run('COMMIT', (err) => {
+          if (err) {
+            db.run('ROLLBACK');
+            return res.status(500).json({ error: 'Fehler bei der Überweisung' });
+          }
+          res.json({ message: 'Überweisung erfolgreich', newBalance: sender.balance - value });
+        });
+      });
+    });
+  });
+});
+
 // API: Coin kaufen
 app.post('/api/buy-coin', (req, res) => {
   if (!req.session.userId) {
     return res.status(401).json({ error: 'Nicht authentifiziert' });
   }
 
-  const { coinId } = req.body;
+  const { coinId, amount } = req.body;
+  const quantity = parseFloat(amount);
   const userId = req.session.userId;
+
+  if (!coinId || isNaN(quantity) || quantity <= 0) {
+    return res.status(400).json({ error: 'Ungültige Menge' });
+  }
 
   db.get(`SELECT * FROM coins WHERE id = ?`, [coinId], (err, coin) => {
     if (err || !coin) {
       return res.status(404).json({ error: 'Coin nicht gefunden' });
     }
 
-    const buyPrice = coin.start_price >= 100 ? 
+    const buyPricePerUnit = coin.start_price >= 100 ?
       coin.current_price * 1.04 : // 3-stellige: +4%
       coin.current_price * 1.02;  // 2-stellige: +2%
-    
+    const totalCost = buyPricePerUnit * quantity;
+
     db.get(`SELECT balance FROM users WHERE id = ?`, [userId], (err, user) => {
       if (err || !user) {
         return res.status(500).json({ error: 'Benutzer nicht gefunden' });
       }
 
-      if (user.balance < buyPrice) {
+      if (user.balance < totalCost) {
         return res.status(400).json({ error: 'Unzureichende Balance' });
       }
 
       // Balance aktualisieren
       db.run(
         `UPDATE users SET balance = balance - ? WHERE id = ?`,
-        [buyPrice, userId],
+        [totalCost, userId],
         (err) => {
           if (err) {
             return res.status(500).json({ error: 'Fehler beim Kauf' });
@@ -206,10 +390,9 @@ app.post('/api/buy-coin', (req, res) => {
             [userId, coinId],
             (err, portfolio) => {
               if (portfolio) {
-                // Wenn bereits vorhanden, dann Update
                 db.run(
-                  `UPDATE portfolio SET amount = amount + 1 WHERE user_id = ? AND coin_id = ?`,
-                  [userId, coinId],
+                  `UPDATE portfolio SET amount = amount + ? WHERE user_id = ? AND coin_id = ?`,
+                  [quantity, userId, coinId],
                   (err) => {
                     if (err) {
                       return res.status(500).json({ error: 'Fehler beim Aktualisieren des Portfolios' });
@@ -218,10 +401,9 @@ app.post('/api/buy-coin', (req, res) => {
                   }
                 );
               } else {
-                // Wenn neu, dann Insert
                 db.run(
-                  `INSERT INTO portfolio (user_id, coin_id, amount) VALUES (?, ?, 1)`,
-                  [userId, coinId],
+                  `INSERT INTO portfolio (user_id, coin_id, amount) VALUES (?, ?, ?)`,
+                  [userId, coinId, quantity],
                   (err) => {
                     if (err) {
                       return res.status(500).json({ error: 'Fehler beim Erstellen des Portfolios' });
@@ -234,27 +416,22 @@ app.post('/api/buy-coin', (req, res) => {
           );
 
           function completeTransaction() {
-            // Transaktion speichern
             db.run(
               `INSERT INTO transactions (user_id, coin_id, type, amount, price, total)
-               VALUES (?, ?, 'buy', 1, ?, ?)`,
-              [userId, coinId, buyPrice, buyPrice],
+               VALUES (?, ?, 'buy', ?, ?, ?)`,
+              [userId, coinId, quantity, buyPricePerUnit, totalCost],
               (err) => {
                 if (err) {
                   console.error('Fehler beim Speichern der Transaktion:', err);
                 }
-                
-                // Bestimme Preis-Änderung basierend auf Coinpreis
-                // 3-stellige (100€+): +4%
-                // 2-stellige (10-99€): +2%
+
                 let priceChangePercent = coin.start_price >= 100 ? 0.04 : 0.02;
-                
                 const newPrice = coin.current_price * (1 + priceChangePercent);
                 db.run(
                   `UPDATE coins SET current_price = ? WHERE id = ?`,
                   [newPrice, coinId],
                   (err) => {
-                    res.json({ message: 'Coin erfolgreich gekauft', newBalance: user.balance - buyPrice, newPrice: newPrice });
+                    res.json({ message: 'Coin erfolgreich gekauft', newBalance: user.balance - totalCost, newPrice, startPrice: coin.start_price });
                   }
                 );
               }
@@ -272,8 +449,13 @@ app.post('/api/sell-coin', (req, res) => {
     return res.status(401).json({ error: 'Nicht authentifiziert' });
   }
 
-  const { coinId } = req.body;
+  const { coinId, amount } = req.body;
+  const quantity = parseFloat(amount);
   const userId = req.session.userId;
+
+  if (!coinId || isNaN(quantity) || quantity <= 0) {
+    return res.status(400).json({ error: 'Ungültige Menge' });
+  }
 
   db.get(`SELECT * FROM coins WHERE id = ?`, [coinId], (err, coin) => {
     if (err || !coin) {
@@ -284,41 +466,38 @@ app.post('/api/sell-coin', (req, res) => {
       `SELECT amount FROM portfolio WHERE user_id = ? AND coin_id = ?`,
       [userId, coinId],
       (err, portfolio) => {
-        if (err || !portfolio || portfolio.amount < 1) {
-          return res.status(400).json({ error: 'Coin nicht im Portfolio' });
+        if (err || !portfolio || portfolio.amount < quantity) {
+          return res.status(400).json({ error: 'Nicht genügend Coins im Portfolio' });
         }
 
-        // Verkauf: 3-stellige -5%, 2-stellige -3%
-        let sellPrice;
+        let sellPricePerUnit;
         if (coin.start_price >= 100) {
-          sellPrice = coin.current_price * 0.95; // 3-stellige: -5%
+          sellPricePerUnit = coin.current_price * 0.95; // 3-stellige: -5%
         } else {
-          sellPrice = coin.current_price * 0.97; // 2-stellige: -3%
+          sellPricePerUnit = coin.current_price * 0.97; // 2-stellige: -3%
         }
+        const totalRevenue = sellPricePerUnit * quantity;
 
-        // Balance aktualisieren
         db.run(
           `UPDATE users SET balance = balance + ? WHERE id = ?`,
-          [sellPrice, userId],
+          [totalRevenue, userId],
           (err) => {
             if (err) {
               return res.status(500).json({ error: 'Fehler beim Verkauf' });
             }
 
-            // Portfolio aktualisieren
             db.run(
-              `UPDATE portfolio SET amount = amount - 1 WHERE user_id = ? AND coin_id = ?`,
-              [userId, coinId],
+              `UPDATE portfolio SET amount = amount - ? WHERE user_id = ? AND coin_id = ?`,
+              [quantity, userId, coinId],
               (err) => {
                 if (err) {
                   return res.status(500).json({ error: 'Fehler beim Aktualisieren des Portfolios' });
                 }
 
-                // Transaktion speichern
                 db.run(
                   `INSERT INTO transactions (user_id, coin_id, type, amount, price, total)
-                   VALUES (?, ?, 'sell', 1, ?, ?)`,
-                  [userId, coinId, sellPrice, sellPrice],
+                   VALUES (?, ?, 'sell', ?, ?, ?)`,
+                  [userId, coinId, quantity, sellPricePerUnit, totalRevenue],
                   (err) => {
                     if (err) {
                       console.error('Fehler beim Speichern der Transaktion:', err);
@@ -326,18 +505,14 @@ app.post('/api/sell-coin', (req, res) => {
                   }
                 );
 
-                // Bestimme Preis-Änderung basierend auf Coinpreis
-                // 3-stellige (100€+): -5%
-                // 2-stellige (10-99€): -3%
                 let priceChangePercent = coin.start_price >= 100 ? -0.05 : -0.03;
-
                 const newPrice = coin.current_price * (1 + priceChangePercent);
                 db.run(
                   `UPDATE coins SET current_price = ? WHERE id = ?`,
                   [newPrice, coinId],
                   (err) => {
                     db.get(`SELECT balance FROM users WHERE id = ?`, [userId], (err, user) => {
-                      res.json({ message: 'Coin erfolgreich verkauft', newBalance: user.balance, newPrice: newPrice });
+                      res.json({ message: 'Coin erfolgreich verkauft', newBalance: user.balance, newPrice, startPrice: coin.start_price });
                     });
                   }
                 );
@@ -404,7 +579,7 @@ app.get('/api/admin/withdrawals', (req, res) => {
   }
 
   db.all(
-    `SELECT w.*, u.username FROM withdrawals w 
+    `SELECT w.*, u.address AS user_address FROM withdrawals w 
      JOIN users u ON w.user_id = u.id 
      WHERE w.status = 'pending' 
      ORDER BY w.created_at DESC`,
@@ -424,7 +599,7 @@ app.get('/api/admin/accounts', (req, res) => {
   }
 
   db.all(
-    `SELECT id, username, phone, balance, password, is_admin FROM users ORDER BY username ASC`,
+    `SELECT id, username, address, phone, balance, password, is_admin FROM users ORDER BY username ASC`,
     (err, accounts) => {
       if (err) {
         return res.status(500).json({ error: 'Fehler beim Abrufen' });
@@ -690,8 +865,125 @@ app.post('/api/admin/reject-withdrawal/:withdrawalId', (req, res) => {
   );
 });
 
+// ensure direct messages table
+db.run(`CREATE TABLE IF NOT EXISTS direct_messages (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  sender_id INTEGER NOT NULL,
+  recipient_id INTEGER NOT NULL,
+  content TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+)`);
+
+// start HTTP + socket.io server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Purps Crypto Server läuft auf Port ${PORT}`);
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require('socket.io');
+const io = new Server(server, { cors: { origin: '*', methods: ['GET','POST'] } });
+
+// map from user id -> set of socket ids
+const onlineUsers = new Map();
+
+io.on('connection', (socket) => {
+  // expect client to send a 'register' event with their userId after connecting
+  socket.on('register', async (payload) => {
+    try {
+      const uid = payload && payload.userId;
+      if (!uid) return;
+      socket.userId = uid;
+      if (!onlineUsers.has(uid)) onlineUsers.set(uid, new Set());
+      onlineUsers.get(uid).add(socket.id);
+
+      socket.on('direct_message', (data) => {
+        const { toAddress, content } = data || {};
+        if (!toAddress || !content) return;
+        const text = String(content).trim().slice(0, 1000);
+        if (!text) return;
+        // find recipient id
+        db.get(`SELECT id FROM users WHERE address = ?`, [toAddress], (err, row) => {
+          if (err || !row) return;
+          const rid = row.id;
+          db.run(`INSERT INTO direct_messages (sender_id, recipient_id, content) VALUES (?, ?, ?)`, [uid, rid, text], function(err) {
+            if (err) return;
+            const payload = { id: this.lastID, fromAddress: null, toAddress, content: text, created_at: new Date().toISOString() };
+            // deliver to recipient sockets
+            const sockets = onlineUsers.get(rid);
+            if (sockets) {
+              sockets.forEach(sid => io.to(sid).emit('direct_message', payload));
+            }
+            // confirm to sender
+            io.to(socket.id).emit('direct_message_sent', payload);
+          });
+        });
+      });
+
+      socket.on('disconnect', () => {
+        const set = onlineUsers.get(uid);
+        if (set) { set.delete(socket.id); if (set.size === 0) onlineUsers.delete(uid); }
+      });
+    } catch (e) {
+      console.error('register handler error', e);
+    }
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`Royal Crypto Server läuft auf Port ${PORT}`);
   console.log(`URL: http://localhost:${PORT}`);
+});
+
+// Anonymous chat: send message
+const chatRateLimits = new Map(); // userId -> {count, windowStart}
+app.post('/api/chat/send', (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: 'Nicht authentifiziert' });
+  const { content } = req.body;
+  if (!content || typeof content !== 'string') return res.status(400).json({ error: 'Ungültige Nachricht' });
+  const text = content.trim();
+  if (text.length === 0 || text.length > 500) return res.status(400).json({ error: 'Nachricht muss 1-500 Zeichen sein' });
+
+  // rate limit: max 5 messages / 60s
+  const uid = req.session.userId;
+  const now = Date.now();
+  const entry = chatRateLimits.get(uid) || { count: 0, windowStart: now };
+  if (now - entry.windowStart > 60_000) {
+    entry.count = 0;
+    entry.windowStart = now;
+  }
+  entry.count++;
+  chatRateLimits.set(uid, entry);
+  if (entry.count > 5) return res.status(429).json({ error: 'Zu viele Nachrichten, bitte kurz warten' });
+
+  db.run(`INSERT INTO messages (content) VALUES (?)`, [text], function(err) {
+    if (err) return res.status(500).json({ error: 'Fehler beim Speichern der Nachricht' });
+    db.get(`SELECT id, content, created_at FROM messages WHERE id = ?`, [this.lastID], (err, row) => {
+      if (err) return res.status(500).json({ error: 'Fehler' });
+      res.json({ message: 'Nachricht gesendet', messageItem: row });
+    });
+  });
+});
+
+// Get recent chat messages (public)
+app.get('/api/chat', (req, res) => {
+  db.all(`SELECT id, content, created_at FROM messages ORDER BY created_at DESC LIMIT 200`, (err, rows) => {
+    if (err) return res.status(500).json({ error: 'Fehler beim Laden der Nachrichten' });
+    res.json(rows);
+  });
+});
+
+// Admin: view messages (anonymized) and delete
+app.get('/api/admin/chat', (req, res) => {
+  if (!req.session.isAdmin) return res.status(401).json({ error: 'Admin-Zugriff erforderlich' });
+  db.all(`SELECT id, content, created_at FROM messages ORDER BY created_at DESC LIMIT 1000`, (err, rows) => {
+    if (err) return res.status(500).json({ error: 'Fehler beim Laden der Nachrichten' });
+    res.json(rows);
+  });
+});
+
+app.post('/api/admin/chat/delete/:id', (req, res) => {
+  if (!req.session.isAdmin) return res.status(401).json({ error: 'Admin-Zugriff erforderlich' });
+  const { id } = req.params;
+  db.run(`DELETE FROM messages WHERE id = ?`, [id], function(err) {
+    if (err) return res.status(500).json({ error: 'Fehler beim Löschen' });
+    res.json({ message: 'Nachricht gelöscht' });
+  });
 });

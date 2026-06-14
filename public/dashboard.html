@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Purps Crypto - Dashboard</title>
+  <title>Royal Crypto - Dashboard</title>
   <style>
     * {
       margin: 0;
@@ -12,16 +12,16 @@
     }
 
     body {
-      background: linear-gradient(135deg, #0f0620 0%, #1a0033 50%, #0f0620 100%);
+      background: linear-gradient(135deg, #000000 0%, #000000 50%, #000000 100%);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
       color: #fff;
     }
 
     .navbar {
-      background: rgba(15, 6, 32, 0.95);
+      background: rgba(10, 10, 10, 0.95);
       backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(139, 79, 191, 0.3);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.3);
       padding: 20px 30px;
       display: flex;
       justify-content: space-between;
@@ -29,7 +29,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 8px 32px rgba(139, 79, 191, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
 
     .navbar-left {
@@ -40,25 +40,25 @@
 
     .logo {
       font-size: 26px;
-      color: #FF6B9D;
+      color: #D4AF37;
       font-weight: 800;
-      text-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
+      text-shadow: 0 0 20px rgba(212, 175, 55, 0.45);
       letter-spacing: 2px;
     }
 
     .user-info {
-      color: #9B6BA8;
+      color: #ffffff;
       font-size: 14px;
     }
 
     .username {
-      color: #00D9FF;
+      color: #FFD700;
       font-weight: bold;
       font-size: 16px;
     }
 
     .balance {
-      color: #4FBF8B;
+      color: #D4AF37;
       font-weight: bold;
       font-size: 18px;
       margin-top: 5px;
@@ -81,14 +81,14 @@
     }
 
     .btn-withdraw {
-      background: linear-gradient(135deg, #4FBF8B 0%, #2FA860 100%);
+      background: linear-gradient(135deg, #D4AF37 0%, #111111 100%);
       color: #fff;
-      box-shadow: 0 4px 15px rgba(79, 191, 139, 0.3);
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
     }
 
     .btn-withdraw:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(79, 191, 139, 0.5);
+      box-shadow: 0 6px 25px rgba(212, 175, 55, 0.35);
     }
 
     .btn-admin {
@@ -102,8 +102,8 @@
     }
 
     .btn-logout {
-      background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%);
-      color: #fff;
+      background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+      color: #000;
     }
 
     .btn-logout:hover {
@@ -119,7 +119,7 @@
     h2 {
       font-size: 28px;
       margin-bottom: 30px;
-      background: linear-gradient(135deg, #FF6B9D, #00D9FF);
+      background: linear-gradient(135deg, #D4AF37, #FFD700);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -133,8 +133,8 @@
     }
 
     .coin-card {
-      background: linear-gradient(135deg, rgba(139, 79, 191, 0.15) 0%, rgba(255, 107, 157, 0.1) 100%);
-      border: 1px solid rgba(139, 79, 191, 0.4);
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.15) 0%, rgba(212, 175, 55, 0.08) 100%);
+      border: 1px solid rgba(212, 175, 55, 0.3);
       border-radius: 16px;
       padding: 25px;
       cursor: pointer;
@@ -152,15 +152,15 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(135deg, rgba(255, 107, 157, 0.2) 0%, transparent 100%);
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%);
       opacity: 0;
       transition: opacity 0.3s;
     }
 
     .coin-card:hover {
-      border-color: #FF6B9D;
+      border-color: #D4AF37;
       transform: translateY(-10px);
-      box-shadow: 0 15px 40px rgba(255, 107, 157, 0.2);
+      box-shadow: 0 15px 40px rgba(212, 175, 55, 0.18);
     }
 
     .coin-card:hover::before {
@@ -178,21 +178,21 @@
     }
 
     .coin-name {
-      color: #FF6B9D;
+      color: #D4AF37;
       font-size: 22px;
       font-weight: 700;
       margin-bottom: 10px;
     }
 
     .coin-price {
-      color: #00D9FF;
+      color: #FFD700;
       font-size: 24px;
       margin-bottom: 8px;
       font-weight: 700;
     }
 
     .coin-amount {
-      color: #9B6BA8;
+      color: #ffffff;
       font-size: 12px;
     }
 
@@ -222,18 +222,18 @@
     }
 
     .modal-content {
-      background: linear-gradient(135deg, rgba(15, 6, 32, 0.95) 0%, rgba(26, 0, 51, 0.95) 100%);
-      border: 1px solid rgba(139, 79, 191, 0.4);
+      background: linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(15, 15, 15, 0.95) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.4);
       border-radius: 20px;
       padding: 50px;
       max-width: 500px;
       width: 90%;
-      box-shadow: 0 25px 65px rgba(139, 79, 191, 0.3);
+      box-shadow: 0 25px 65px rgba(0, 0, 0, 0.3);
       backdrop-filter: blur(10px);
     }
 
     .modal-title {
-      color: #FF6B9D;
+      color: #D4AF37;
       font-size: 28px;
       margin-bottom: 25px;
       text-align: center;
@@ -243,16 +243,16 @@
     .coin-details {
       margin-bottom: 25px;
       padding: 20px;
-      background: rgba(139, 79, 191, 0.15);
+      background: rgba(0, 0, 0, 0.15);
       border-radius: 12px;
-      border: 1px solid rgba(139, 79, 191, 0.3);
+      border: 1px solid rgba(0, 0, 0, 0.3);
     }
 
     .detail-row {
       display: flex;
       justify-content: space-between;
       margin-bottom: 12px;
-      color: #9B6BA8;
+      color: #ffffff;
     }
 
     .detail-label {
@@ -260,7 +260,7 @@
     }
 
     .detail-value {
-      color: #FF6B9D;
+      color: #D4AF37;
       font-weight: 700;
     }
 
@@ -282,7 +282,7 @@
     }
 
     .btn-buy {
-      background: linear-gradient(135deg, #4FBF8B 0%, #2FA860 100%);
+      background: linear-gradient(135deg, #D4AF37 0%, #111111 100%);
       color: #fff;
     }
 
@@ -292,13 +292,13 @@
     }
 
     .btn-sell {
-      background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%);
+      background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
       color: #fff;
     }
 
     .btn-sell:hover:not(:disabled) {
       transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
+      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.45);
     }
 
     .btn-action:disabled {
@@ -307,12 +307,12 @@
     }
 
     .btn-close {
-      background: rgba(139, 79, 191, 0.4);
+      background: rgba(0, 0, 0, 0.4);
       color: #fff;
     }
 
     .btn-close:hover {
-      background: rgba(139, 79, 191, 0.6);
+      background: rgba(0, 0, 0, 0.6);
     }
 
     .message {
@@ -325,14 +325,14 @@
 
     .message.success {
       background: rgba(79, 191, 139, 0.2);
-      border: 1px solid #4FBF8B;
-      color: #4FBF8B;
+      border: 1px solid #D4AF37;
+      color: #D4AF37;
     }
 
     .message.error {
-      background: rgba(255, 107, 157, 0.2);
-      border: 1px solid #FF6B9D;
-      color: #FF6B9D;
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid #D4AF37;
+      color: #D4AF37;
     }
 
     .message.show {
@@ -342,9 +342,9 @@
     .withdrawal-form {
       margin-top: 20px;
       padding: 20px;
-      background: rgba(139, 79, 191, 0.15);
+      background: rgba(0, 0, 0, 0.15);
       border-radius: 12px;
-      border: 1px solid rgba(139, 79, 191, 0.3);
+      border: 1px solid rgba(0, 0, 0, 0.3);
     }
 
     .form-group {
@@ -353,7 +353,7 @@
 
     .form-label {
       display: block;
-      color: #FF6B9D;
+      color: #D4AF37;
       font-weight: 600;
       margin-bottom: 8px;
       font-size: 13px;
@@ -362,26 +362,25 @@
     .form-input {
       width: 100%;
       padding: 12px;
-      background: rgba(15, 6, 32, 0.8);
-      border: 1px solid rgba(139, 79, 191, 0.4);
+      background: rgba(10, 10, 10, 0.8);
+      border: 1px solid rgba(0, 0, 0, 0.4);
       border-radius: 8px;
       color: #fff;
       font-size: 14px;
       transition: all 0.3s;
     }
 
-    .form-input::placeholder {
-      color: #9B6BA8;
+    .form-input::placeholder { color: #ffffff;
     }
 
     .form-input:focus {
       outline: none;
-      border-color: #FF6B9D;
-      box-shadow: 0 0 15px rgba(255, 107, 157, 0.2);
+      border-color: #D4AF37;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
     }
 
     .form-error {
-      color: #FF6B9D;
+      color: #D4AF37;
       font-size: 12px;
       margin-top: 5px;
       display: none;
@@ -415,8 +414,8 @@
     }
 
     .account-item {
-      background: rgba(139, 79, 191, 0.15);
-      border: 1px solid rgba(139, 79, 191, 0.4);
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(0, 0, 0, 0.4);
       border-radius: 12px;
       padding: 15px;
       margin-bottom: 10px;
@@ -433,19 +432,19 @@
     }
 
     .account-user {
-      color: #FF6B9D;
+      color: #D4AF37;
       font-weight: 700;
       margin-bottom: 5px;
     }
 
     .account-details {
-      color: #9B6BA8;
+      color: #ffffff;
       font-size: 12px;
       line-height: 1.6;
     }
 
     .account-balance {
-      color: #00D9FF;
+      color: #FFD700;
       font-weight: 700;
       margin: 5px 0;
     }
@@ -458,21 +457,20 @@
 
     .add-balance-input {
       padding: 10px 12px;
-      background: rgba(15, 6, 32, 0.8);
-      border: 1px solid rgba(139, 79, 191, 0.4);
+      background: rgba(10, 10, 10, 0.8);
+      border: 1px solid rgba(0, 0, 0, 0.4);
       border-radius: 8px;
       color: #fff;
       font-size: 13px;
       width: 100px;
     }
 
-    .add-balance-input::placeholder {
-      color: #9B6BA8;
+    .add-balance-input::placeholder { color: #ffffff;
     }
 
     .add-balance-input:focus {
       outline: none;
-      border-color: #FF6B9D;
+      border-color: #D4AF37;
     }
 
     .btn-small {
@@ -486,7 +484,7 @@
     }
 
     .btn-approve {
-      background: linear-gradient(135deg, #4FBF8B 0%, #2FA860 100%);
+      background: linear-gradient(135deg, #D4AF37 0%, #111111 100%);
       color: #fff;
     }
 
@@ -495,7 +493,7 @@
     }
 
     .btn-reject {
-      background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%);
+      background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
       color: #fff;
     }
 
@@ -503,9 +501,98 @@
       transform: translateY(-2px);
     }
 
+    .quantity-selector {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qty-btn {
+      background: rgba(212, 175, 55, 0.2);
+      color: #fff;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .qty-btn:hover {
+      background: rgba(212, 175, 55, 0.4);
+    }
+
+    .portfolio-panel {
+      margin: 20px auto;
+      max-width: 1200px;
+      background: linear-gradient(180deg, rgba(15, 15, 15, 0.95), rgba(5, 5, 5, 0.9));
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .portfolio-title {
+      font-size: 20px;
+      color: #fadf5f;
+      margin-bottom: 16px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .portfolio-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .portfolio-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      border: 1px solid rgba(212, 175, 55, 0.18);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .portfolio-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.25);
+    }
+
+    .portfolio-name {
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .portfolio-meta {
+      color: #ccbf92;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .portfolio-value {
+      color: #ffd166;
+      font-weight: 700;
+      text-align: right;
+      font-size: 18px;
+    }
+
+    .portfolio-value small {
+      display: block;
+      color: #b3a86f;
+      font-size: 12px;
+      margin-top: 4px;
+      font-weight: 400;
+    }
+
     .withdrawal-item {
-      background: rgba(139, 79, 191, 0.15);
-      border: 1px solid rgba(139, 79, 191, 0.4);
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(0, 0, 0, 0.4);
       border-radius: 12px;
       padding: 15px;
       margin-bottom: 10px;
@@ -515,18 +602,18 @@
     }
 
     .withdrawal-user {
-      color: #FF6B9D;
+      color: #D4AF37;
       font-weight: 700;
       margin-bottom: 5px;
     }
 
     .withdrawal-details {
-      color: #9B6BA8;
+      color: #ffffff;
       font-size: 12px;
     }
 
     .withdrawal-amount {
-      color: #00D9FF;
+      color: #FFD700;
       font-weight: 700;
       margin: 5px 0;
     }
@@ -538,23 +625,27 @@
 
     .no-withdrawals {
       text-align: center;
-      color: #9B6BA8;
+      color: #ffffff;
       padding: 20px;
       font-style: italic;
     }
   </style>
 </head>
 <body>
+  <div id="offlineBanner" style="display:none; background:#ffcc00; color:#000; text-align:center; padding:8px; font-weight:bold;">
+    Offline-Modus: Backend nicht erreichbar. Funktionalität eingeschränkt.
+  </div>
   <div class="navbar">
     <div class="navbar-left">
-      <div class="logo">💎 PURPS</div>
+      <div class="logo">💎 Royal Crypto</div>
       <div class="user-info">
-        <div class="username" id="username">Lade...</div>
+        <div class="address" id="address">Adresse wird geladen...</div>
         <div class="balance" id="balance">0€</div>
       </div>
     </div>
     <div class="navbar-right">
       <button class="btn btn-withdraw" onclick="openWithdrawalModal()">💸 Auszahlung</button>
+      <button class="btn btn-transfer" onclick="openTransferModal()">🔁 Überweisen</button>
       <button class="btn btn-admin" id="adminBtn" onclick="toggleAdminPanel()" style="display: none;">⚙️ Admin</button>
       <button class="btn btn-logout" onclick="logout()">Logout</button>
     </div>
@@ -567,19 +658,53 @@
         <div class="admin-title">⚙️ Admin-Panel</div>
         
         <!-- Kontoübersicht -->
-        <h3 style="color: #FF6B9D; margin-bottom: 20px; font-size: 18px;">� Alle Konten</h3>
+        <h3 style="color: #D4AF37; margin-bottom: 20px; font-size: 18px;">� Alle Konten</h3>
         <div id="accountsList" style="max-height: 600px; overflow-y: auto; display: grid; gap: 15px;"></div>
 
         <!-- Auszahlungen -->
-        <h3 style="color: #FF6B9D; margin-top: 40px; margin-bottom: 20px; font-size: 18px;">💸 Ausstehende Auszahlungen</h3>
+        <h3 style="color: #D4AF37; margin-top: 40px; margin-bottom: 20px; font-size: 18px;">💸 Ausstehende Auszahlungen</h3>
         <div id="withdrawalsList" class="no-withdrawals">Keine ausstehenden Auszahlungen</div>
       </div>
     </div>
 
     <!-- Coins Grid -->
+    <div class="portfolio-panel">
+      <div class="portfolio-title">Portfolio</div>
+      <div id="portfolioList" class="portfolio-list">
+        <div class="no-portfolio">Portfolio wird geladen...</div>
+      </div>
+      <div id="portfolioTotal" class="portfolio-total"><strong>Gesamtwert:</strong> 0€</div>
+    </div>
+
     <h2>🪙 Verfügbare Coins</h2>
     <div class="coins-grid" id="coinsGrid">
       Lade Coins...
+    </div>
+    
+    <!-- Anonymous Chat -->
+    <div class="chat-panel" style="margin-top: 24px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="font-weight:700; color:#D4AF37;">💬 Anonymer Chat</div>
+        <div style="font-size:12px; color:#ccc;">Admins sehen Nachrichten, nicht den Autor</div>
+      </div>
+      <div id="chatList" style="max-height:220px; overflow-y:auto; background: rgba(255,255,255,0.02); padding:8px; border-radius:6px;">
+        <div class="no-chat">Lade Nachrichten...</div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:8px;">
+        <input id="chatInput" placeholder="Schreibe eine anonyme Nachricht..." maxlength="500" style="flex:1; padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.08); background:transparent; color:#fff;">
+        <button class="btn" onclick="sendChat()">Senden</button>
+      </div>
+    </div>
+    
+    <!-- Direct messages -->
+    <div class="dm-panel" style="margin-top:16px; background: rgba(0,0,0,0.25); padding:12px; border-radius:8px;">
+      <div style="font-weight:700; color:#D4AF37; margin-bottom:8px;">✉️ Direktnachricht via Adresse</div>
+      <div style="display:flex; gap:8px; margin-bottom:8px;">
+        <input id="dmAddress" placeholder="Empfänger-Adresse (0x...)" style="flex:1; padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.08); background:transparent; color:#fff;">
+        <input id="dmInput" placeholder="Deine Nachricht" maxlength="1000" style="flex:2; padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.08); background:transparent; color:#fff;">
+        <button class="btn" onclick="sendDirect()">Senden</button>
+      </div>
+      <div id="dmList" style="max-height:220px; overflow-y:auto; background: rgba(255,255,255,0.02); padding:8px; border-radius:6px;"></div>
     </div>
   </div>
 
@@ -603,11 +728,23 @@
           <span class="detail-value" id="modalUserAmount">0</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label" style="color: #4FBF8B;">Kaufpreis (<span id="buyPercent">+3%</span>):</span>
+          <span class="detail-label">Menge:</span>
+          <span class="detail-value quantity-selector">
+            <button type="button" class="qty-btn" onclick="changeModalAmount(-0.1)">-0.1</button>
+            <input type="number" id="modalAmount" class="form-input" placeholder="0.67" min="0.01" step="0.01" value="1" oninput="updateModalTotalPrice()" style="width: 100px; text-align: center;">
+            <button type="button" class="qty-btn" onclick="changeModalAmount(0.1)">+0.1</button>
+          </span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Gesamtpreis:</span>
+          <span class="detail-value" id="modalTotalPrice">0€</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label" style="color: #D4AF37;">Kaufpreis (<span id="buyPercent">+3%</span>):</span>
           <span class="detail-value" id="modalBuyPrice">0€</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label" style="color: #FF6B9D;">Verkaufspreis (<span id="sellPercent">-4%</span>):</span>
+          <span class="detail-label" style="color: #D4AF37;">Verkaufspreis (<span id="sellPercent">-4%</span>):</span>
           <span class="detail-value" id="modalSellPrice">0€</span>
         </div>
       </div>
@@ -629,13 +766,13 @@
       <div class="withdrawal-form">
         <div class="form-group">
           <label class="form-label">Betrag (€):</label>
-          <input type="number" id="withdrawAmount" class="form-input" placeholder="z.B. 100" min="0" step="0.01">
+          <input type="number" id="withdrawAmount" class="form-input" placeholder="" min="0" step="0.01">
           <div class="form-error" id="withdrawAmountError"></div>
         </div>
 
         <div class="form-group">
           <label class="form-label">IBAN:</label>
-          <input type="text" id="withdrawIban" class="form-input" placeholder="89370400440532013000">
+          <input type="text" id="withdrawIban" class="form-input" placeholder="">
           <div class="form-error" id="withdrawIbanError"></div>
         </div>
 
@@ -647,8 +784,51 @@
     </div>
   </div>
 
+  <div id="transferModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-title">🔁 Überweisen</div>
+      <div id="transferMessage" class="message"></div>
+      <div class="transfer-form">
+        <div class="form-group">
+          <label class="form-label">Empfängeradresse</label>
+          <input type="text" id="recipientAddress" class="modal-input" placeholder="0x...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Betrag (€)</label>
+          <input type="number" id="transferAmount" class="modal-input" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="transfer-note">Überweise direkt an die Wallet-Adresse eines anderen Nutzers. Es werden keine Namen angezeigt.</div>
+        <div class="btn-modal-group">
+          <button class="btn-action btn-transfer modal-action" onclick="submitTransfer()">Überweisen</button>
+          <button class="btn-action btn-close modal-action" onclick="closeTransferModal()">Abbrechen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // static helper (same logic as index.html)
+    function runningStatically() {
+      return location.hostname.endsWith('github.io') || location.protocol === 'file:';
+    }
+
+    // initialize some offline data structures
+    function initStaticData() {
+      if (!localStorage.getItem('offlineUsers')) {
+        localStorage.setItem('offlineUsers', JSON.stringify([]));
+      }
+      if (!localStorage.getItem('offlineCoins')) {
+        const defaultCoins = [
+          { id: 1, name: 'PurpsCoin', current_price: 10, start_price: 10 }
+        ];
+        localStorage.setItem('offlineCoins', JSON.stringify(defaultCoins));
+      }
+    }
+
     let currentCoinId = null;
+    let currentBuyPricePerUnit = 0;
+    let currentSellPricePerUnit = 0;
+    let currentStartPrice = 0;
 
     function getPriceMultipliers(startPrice) {
       // 3-stellige (100€+): +4% Kauf, -5% Verkauf
@@ -662,15 +842,43 @@
       }
     }
 
+    function updateModalTotalPrice() {
+      const amount = parseFloat(document.getElementById('modalAmount').value);
+      const totalPrice = !isNaN(amount) && amount > 0 ? amount * currentBuyPricePerUnit : 0;
+      document.getElementById('modalTotalPrice').textContent = totalPrice.toFixed(2) + '€';
+    }
+
+    function changeModalAmount(delta) {
+      const amountInput = document.getElementById('modalAmount');
+      let amount = parseFloat(amountInput.value) || 0;
+      amount = Math.max(0.01, Math.round((amount + delta) * 100) / 100);
+      amountInput.value = amount.toFixed(2);
+      updateModalTotalPrice();
+    }
+
     async function loadUserInfo() {
       try {
+        if (runningStatically()) {
+          const current = localStorage.getItem('offlineCurrentUser');
+          const users = JSON.parse(localStorage.getItem('offlineUsers') || '[]');
+          const data = users.find(u => u.username === current);
+          if (!data) return;
+          document.getElementById('username').textContent = data.username;
+          document.getElementById('balance').textContent = (data.balance || 0).toFixed(2) + '€';
+          if (data.is_admin) {
+            document.getElementById('adminBtn').style.display = 'block';
+          }
+          return;
+        }
+
         const response = await fetch('/api/user');
         const data = await response.json();
-        document.getElementById('username').textContent = data.username;
+        document.getElementById('address').textContent = data.address || 'Adresse nicht verfügbar';
         document.getElementById('balance').textContent = data.balance.toFixed(2) + '€';
+        window.currentUser = data;
         
         // Zeige Admin-Button wenn Admin
-        if (data.is_admin) {
+        if (data.is_admin === 1) {
           document.getElementById('adminBtn').style.display = 'block';
         }
       } catch (error) {
@@ -681,13 +889,18 @@
     async function loadCoins() {
       try {
         console.log('Loading coins...');
-        const response = await fetch('/api/coins');
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+
+        let coins;
+        if (runningStatically()) {
+          coins = JSON.parse(localStorage.getItem('offlineCoins') || '[]');
+        } else {
+          const response = await fetch('/api/coins');
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          coins = await response.json();
         }
-        
-        const coins = await response.json();
+
         console.log('Coins loaded:', coins);
         
         const grid = document.getElementById('coinsGrid');
@@ -717,18 +930,20 @@
           grid.appendChild(card);
         });
 
-        // Lade Portfolio-Informationen
-        coins.forEach(coin => {
-          fetch(`/api/coin/${coin.id}`)
-            .then(r => r.json())
-            .then(data => {
-              const amountEl = document.getElementById(`amount-${coin.id}`);
-              if (amountEl) {
-                amountEl.textContent = `Du hast: ${data.userAmount}`;
-              }
-            })
-            .catch(err => console.error('Error loading coin amount:', err));
-        });
+        if (!runningStatically()) {
+          // Lade Portfolio-Informationen nur im Server‑Modus
+          coins.forEach(coin => {
+            fetch(`/api/coin/${coin.id}`)
+              .then(r => r.json())
+              .then(data => {
+                const amountEl = document.getElementById(`amount-${coin.id}`);
+                if (amountEl) {
+                  amountEl.textContent = `Du hast: ${data.userAmount}`;
+                }
+              })
+              .catch(err => console.error('Error loading coin amount:', err));
+          });
+        }
         
         console.log('Coins rendered successfully');
       } catch (error) {
@@ -756,6 +971,184 @@
       }
     }
 
+    // Chat functions
+    async function loadChat() {
+      try {
+        const res = await fetch('/api/chat');
+        const messages = await res.json();
+        const list = document.getElementById('chatList');
+        if (!messages || messages.length === 0) {
+          list.innerHTML = '<div class="no-chat">Keine Nachrichten</div>';
+          return;
+        }
+        list.innerHTML = '';
+        messages.forEach(m => {
+          const el = document.createElement('div');
+          el.className = 'chat-item';
+          el.style.padding = '6px 8px';
+          el.style.borderBottom = '1px solid rgba(255,255,255,0.03)';
+          const deleteButton = (window.currentUser && window.currentUser.is_admin === 1)
+            ? `<button onclick="deleteChatMessage(${m.id})" style="margin-top:6px;padding:4px 8px;border:none;border-radius:4px;background:#EF4444;color:#fff;cursor:pointer;font-size:11px;">Löschen</button>`
+            : '';
+          el.innerHTML = `<div style="font-size:13px; color:#fff;">${escapeHtml(m.content)}</div><div style="font-size:11px; color:#bbb; margin-top:4px;">${new Date(m.created_at).toLocaleString()}</div>${deleteButton}`;
+          list.appendChild(el);
+        });
+      } catch (e) {
+        console.error('Chat load failed', e);
+      }
+    }
+
+    async function sendChat() {
+      const input = document.getElementById('chatInput');
+      const text = (input.value || '').trim();
+      if (!text) return;
+      try {
+        const res = await fetch('/api/chat/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: text }) });
+        if (!res.ok) {
+          const err = await res.json().catch(()=>({error:'Fehler'}));
+          alert(err.error || 'Fehler beim Senden');
+          return;
+        }
+        input.value = '';
+        loadChat();
+      } catch (err) {
+        console.error('Send chat error', err);
+      }
+    }
+
+    // simple escape
+    function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+    setInterval(loadChat, 5000);
+    loadChat();
+    
+    // socket.io direct messaging - ensure client lib is loaded before connecting
+    function setupSocket(ioLib) {
+      try {
+        const socket = ioLib();
+        window.socket = socket;
+        (async function registerSocket(){
+          try {
+            const u = await (await fetch('/api/user')).json();
+            window.currentUser = u;
+            socket.emit('register', { userId: u.id });
+          } catch(e){}
+        })();
+
+        socket.on('direct_message', (m) => {
+          const list = document.getElementById('dmList');
+          const el = document.createElement('div');
+          el.style.padding='6px'; el.style.borderBottom='1px solid rgba(255,255,255,0.03)';
+          el.innerHTML = `<div style="color:#fff">${escapeHtml(m.content)}</div><div style="font-size:11px;color:#bbb">${new Date(m.created_at).toLocaleString()}</div>`;
+          list.prepend(el);
+        });
+
+        socket.on('direct_message_sent', (m) => {
+          const list = document.getElementById('dmList');
+          const el = document.createElement('div');
+          el.style.padding='6px'; el.style.borderBottom='1px solid rgba(255,255,255,0.03)';
+          el.innerHTML = `<div style="color:#D4AF37">(Gesendet) ${escapeHtml(m.content)}</div><div style="font-size:11px;color:#bbb">${new Date(m.created_at).toLocaleString()}</div>`;
+          list.prepend(el);
+        });
+
+        window.sendDirect = async function(){
+          const addr = document.getElementById('dmAddress').value.trim();
+          const txt = document.getElementById('dmInput').value.trim();
+          if (!addr || !txt) return alert('Adresse und Nachricht erforderlich');
+          socket.emit('direct_message', { toAddress: addr, content: txt });
+          document.getElementById('dmInput').value = '';
+        }
+      } catch (e) {
+        console.error('setupSocket error', e);
+      }
+    }
+
+    (function ensureSocket(){
+      if (window.io) return setupSocket(window.io);
+      const s = document.createElement('script');
+      s.src = '/socket.io/socket.io.js';
+      s.onload = () => setupSocket(window.io);
+      document.head.appendChild(s);
+    })();
+
+    async function loadPortfolio() {
+      try {
+        const response = await fetch('/api/portfolio');
+        const list = document.getElementById('portfolioList');
+        const totalEl = document.getElementById('portfolioTotal');
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          list.innerHTML = `<div class="no-portfolio">Fehler: ${errorData.error || 'Portfolio konnte nicht geladen werden'}</div>`;
+          totalEl.innerHTML = '<strong>Gesamtwert:</strong> 0€';
+          return;
+        }
+
+        const portfolio = await response.json();
+
+        if (!portfolio || portfolio.length === 0) {
+          list.innerHTML = '<div class="no-portfolio">Du besitzt aktuell keine Coins.</div>';
+          totalEl.innerHTML = '<strong>Gesamtwert:</strong> 0€';
+          return;
+        }
+
+        const totalValue = portfolio.reduce((s, it) => s + (it.value || 0), 0);
+        list.innerHTML = '';
+        portfolio.forEach(item => {
+          const pct = totalValue > 0 ? ((item.value || 0) / totalValue) * 100 : 0;
+          const node = document.createElement('div');
+          node.className = 'portfolio-item';
+          node.innerHTML = `
+            <div>
+              <div class="portfolio-name">${item.name}</div>
+              <div class="portfolio-meta">Menge: ${parseFloat(item.amount).toFixed(4)} · Preis: ${parseFloat(item.current_price).toFixed(2)}€ · <strong>${pct.toFixed(2)}%</strong></div>
+            </div>
+            <div class="portfolio-value">${parseFloat(item.value).toFixed(2)}€</div>
+          `;
+          list.appendChild(node);
+        });
+
+        totalEl.innerHTML = `<strong>Gesamtwert:</strong> ${totalValue.toFixed(2)}€`;
+        populateTransferAssets(portfolio);
+      } catch (error) {
+        console.error('Fehler beim Laden des Portfolios:', error);
+      }
+    }
+
+    function updateTransferLabel() {
+      const asset = document.getElementById('transferAssetSelect').value;
+      const label = document.getElementById('transferAmountLabel');
+      label.textContent = asset === 'balance' ? 'Betrag (€)' : 'Menge (Coins)';
+    }
+
+    function populateTransferAssets(portfolio) {
+      const select = document.getElementById('transferAssetSelect');
+      if (!select) return;
+      const currentValue = select.value || 'balance';
+      select.innerHTML = '<option value="balance">Guthaben</option>';
+      portfolio.forEach(item => {
+        select.insertAdjacentHTML('beforeend', `<option value="${item.coin_id}">${item.name} (${parseFloat(item.amount).toFixed(4)})</option>`);
+      });
+      select.value = currentValue;
+      updateTransferLabel();
+    }
+
+    async function deleteChatMessage(messageId) {
+      if (!window.currentUser || window.currentUser.is_admin !== 1) return;
+      if (!confirm('Nachricht wirklich löschen?')) return;
+      try {
+        const response = await fetch(`/api/admin/chat/delete/${messageId}`, { method: 'POST' });
+        if (response.ok) {
+          loadChat();
+        } else {
+          const data = await response.json().catch(() => ({}));
+          alert(data.error || 'Fehler beim Löschen der Nachricht');
+        }
+      } catch (error) {
+        alert('Fehler beim Löschen der Nachricht: ' + error.message);
+      }
+    }
+
     async function openCoinModal(coinId, coin) {
       currentCoinId = coinId;
       try {
@@ -765,7 +1158,7 @@
         document.getElementById('coinModalTitle').textContent = data.name;
         document.getElementById('modalCoinPrice').textContent = data.current_price.toFixed(2) + '€';
         document.getElementById('modalStartPrice').textContent = data.start_price + '€';
-        document.getElementById('modalUserAmount').textContent = data.userAmount;
+        document.getElementById('modalUserAmount').textContent = parseFloat(data.userAmount || 0).toFixed(4);
 
         const multipliers = getPriceMultipliers(data.start_price);
         const buyPrice = data.current_price * multipliers.buy;
@@ -775,9 +1168,14 @@
         document.getElementById('modalSellPrice').textContent = sellPrice.toFixed(2) + '€';
         document.getElementById('buyPercent').textContent = multipliers.buyPercent;
         document.getElementById('sellPercent').textContent = multipliers.sellPercent;
+        currentBuyPricePerUnit = buyPrice;
+        currentSellPricePerUnit = sellPrice;
+        currentStartPrice = data.start_price;
 
-        // Deaktiviere Sell-Button wenn keine Coins vorhanden
-        document.getElementById('sellBtn').disabled = data.userAmount < 1;
+        // Deaktiviere Sell-Button nur wenn nichts im Portfolio ist
+        document.getElementById('sellBtn').disabled = data.userAmount <= 0;
+        document.getElementById('modalAmount').value = 1;
+        updateModalTotalPrice();
 
         document.getElementById('coinModal').classList.add('active');
       } catch (error) {
@@ -787,10 +1185,18 @@
 
     async function buyCoin() {
       try {
+        const amount = parseFloat(document.getElementById('modalAmount').value);
+        if (!amount || amount <= 0) {
+          const msgEl = document.getElementById('coinModalMessage');
+          msgEl.className = 'message error show';
+          msgEl.textContent = '✗ Bitte gib eine gültige Menge ein';
+          return;
+        }
+
         const response = await fetch('/api/buy-coin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ coinId: currentCoinId })
+          body: JSON.stringify({ coinId: currentCoinId, amount })
         });
 
         const data = await response.json();
@@ -840,10 +1246,18 @@
 
     async function sellCoin() {
       try {
+        const amount = parseFloat(document.getElementById('modalAmount').value);
+        if (!amount || amount <= 0) {
+          const msgEl = document.getElementById('coinModalMessage');
+          msgEl.className = 'message error show';
+          msgEl.textContent = '✗ Bitte gib eine gültige Menge ein';
+          return;
+        }
+
         const response = await fetch('/api/sell-coin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ coinId: currentCoinId })
+          body: JSON.stringify({ coinId: currentCoinId, amount })
         });
 
         const data = await response.json();
@@ -950,6 +1364,71 @@
       }
     }
 
+    async function submitTransfer() {
+      try {
+        const recipientAddress = document.getElementById('recipientAddress').value.trim();
+        const amount = parseFloat(document.getElementById('transferAmount').value);
+        const msgEl = document.getElementById('transferMessage');
+
+        if (!recipientAddress) {
+          msgEl.className = 'message error show';
+          msgEl.textContent = '✗ Bitte gib eine gültige Empfängeradresse ein';
+          return;
+        }
+
+        if (!amount || amount <= 0) {
+          msgEl.className = 'message error show';
+          msgEl.textContent = '✗ Bitte gib einen gültigen Betrag ein';
+          return;
+        }
+
+        const asset = document.getElementById('transferAssetSelect').value;
+        const body = { recipientAddress, amount };
+        if (asset !== 'balance') {
+          body.coinId = asset;
+        }
+        const response = await fetch('/api/transfer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          msgEl.className = 'message success show';
+          msgEl.textContent = data.message || '✓ Überweisung erfolgreich';
+          if (data.newBalance !== undefined) {
+            document.getElementById('balance').textContent = data.newBalance.toFixed(2) + '€';
+          }
+          loadPortfolio();
+          setTimeout(() => {
+            msgEl.className = 'message';
+            msgEl.textContent = '';
+            closeTransferModal();
+          }, 2000);
+        } else {
+          msgEl.className = 'message error show';
+          msgEl.textContent = '✗ ' + data.error;
+        }
+      } catch (error) {
+        const msgEl = document.getElementById('transferMessage');
+        msgEl.className = 'message error show';
+        msgEl.textContent = '✗ Fehler: ' + error.message;
+      }
+    }
+
+    function openTransferModal() {
+      document.getElementById('transferMessage').className = 'message';
+      document.getElementById('transferMessage').textContent = '';
+      document.getElementById('recipientAddress').value = '';
+      document.getElementById('transferAmount').value = '';
+      document.getElementById('transferModal').classList.add('active');
+    }
+
+    function closeTransferModal() {
+      document.getElementById('transferModal').classList.remove('active');
+    }
+
     function showWithdrawalError(elementId, message) {
       const element = document.getElementById(elementId);
       element.textContent = message;
@@ -992,13 +1471,14 @@
           
           const item = document.createElement('div');
           item.className = 'account-item';
-          item.style.cssText = 'border-left: 4px solid ' + (account.is_admin ? '#4FBF8B' : '#FF6B9D') + ';';
+          item.style.cssText = 'border-left: 4px solid ' + (account.is_admin ? '#D4AF37' : '#D4AF37') + ';';
           item.innerHTML = `
             <div class="account-info">
               <div class="account-user">${account.username} ${isAdmin}</div>
               <div class="account-details">
                 <div>Tel: ${account.phone}</div>
-                <div style="font-size: 12px; color: #9B6BA8; margin-top: 5px;">Coins: ${coinsInfo}</div>
+                <div>Adresse: <span style="font-family: monospace; color: #FFD700;">${account.address || '—'}</span></div>
+                <div style="font-size: 12px; color: #ffffff; margin-top: 5px;">Coins: ${coinsInfo}</div>
               </div>
               <div class="account-balance">Balance: ${account.balance.toFixed(2)}€</div>
             </div>
@@ -1006,25 +1486,25 @@
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
               <!-- Geld hinzufügen -->
               <div style="display: flex; gap: 8px; align-items: center;">
-                <input type="number" id="amount-add-${account.id}" class="add-balance-input" placeholder="Geld +" min="0" step="0.01" style="flex: 1;">
+                <input type="number" id="amount-add-${account.id}" class="add-balance-input" placeholder="" min="0" step="0.01" style="flex: 1;">
                 <button class="btn-small btn-approve" onclick="addBalance(${account.id})" title="Geld hinzufügen">+</button>
               </div>
               
               <!-- Geld entfernen -->
               <div style="display: flex; gap: 8px; align-items: center;">
-                <input type="number" id="amount-remove-${account.id}" class="add-balance-input" placeholder="Geld -" min="0" step="0.01" style="flex: 1;">
-                <button class="btn-small" onclick="removeBalance(${account.id})" style="background: #FF6B9D; padding: 8px 12px; border: none; border-radius: 6px; color: white; cursor: pointer;" title="Geld entfernen">−</button>
+                <input type="number" id="amount-remove-${account.id}" class="add-balance-input" placeholder="" min="0" step="0.01" style="flex: 1;">
+                <button class="btn-small" onclick="removeBalance(${account.id})" style="background: #D4AF37; padding: 8px 12px; border: none; border-radius: 6px; color: white; cursor: pointer;" title="Geld entfernen">−</button>
               </div>
               
               <!-- Passwort Reset -->
               <div style="display: flex; gap: 8px; align-items: center;">
-                <input type="text" id="password-${account.id}" class="add-balance-input" placeholder="Neues Passwort" style="flex: 1;">
-                <button class="btn-small" onclick="resetPassword(${account.id})" style="background: #8B4FBF; padding: 8px 12px; border: none; border-radius: 6px; color: white; cursor: pointer; flex: 1;" title="Passwort ändern">🔐 PW</button>
+                <input type="text" id="password-${account.id}" class="add-balance-input" placeholder="" style="flex: 1;">
+                <button class="btn-small" onclick="resetPassword(${account.id})" style="background: #000000; padding: 8px 12px; border: none; border-radius: 6px; color: white; cursor: pointer; flex: 1;" title="Passwort ändern">🔐 PW</button>
               </div>
               
               <!-- Admin & Delete Buttons -->
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button class="btn-small" onclick="toggleAdmin(${account.id}, ${account.is_admin})" style="background: ${account.is_admin ? '#FF6B9D' : '#4FBF8B'}; padding: 8px 12px; border: none; border-radius: 6px; color: white; cursor: pointer; flex: 1;">${account.is_admin ? '👑 Admin entfernen' : '👑 Admin geben'}</button>
+                <button class="btn-small" onclick="toggleAdmin(${account.id}, ${account.is_admin})" style="background: ${account.is_admin ? '#D4AF37' : '#D4AF37'}; padding: 8px 12px; border: none; border-radius: 6px; color: white; cursor: pointer; flex: 1;">${account.is_admin ? '👑 Admin entfernen' : '👑 Admin geben'}</button>
                 <button class="btn-small" onclick="deleteAccount(${account.id})" style="background: #EF4444; padding: 8px 12px; border: none; border-radius: 6px; color: white; cursor: pointer; flex: 1;">🗑️ Löschen</button>
               </div>
             </div>
@@ -1241,6 +1721,11 @@
 
     async function logout() {
       try {
+        if (runningStatically()) {
+          localStorage.removeItem('offlineCurrentUser');
+          window.location.href = '/';
+          return;
+        }
         await fetch('/api/logout', { method: 'POST' });
         window.location.href = '/';
       } catch (error) {
@@ -1264,10 +1749,16 @@
     // Initialisierung
     function initializeApp() {
       console.log('App initializing...');
+      if (runningStatically()) {
+        initStaticData();
+        document.getElementById('offlineBanner').style.display = 'block';
+      }
       loadUserInfo();
+      loadPortfolio();
       loadCoins();
       checkAdmin();
       setInterval(loadUserInfo, 5000);
+      setInterval(loadPortfolio, 10000);
       setInterval(loadCoins, 10000);
       console.log('App initialized');
     }
@@ -1278,3 +1769,9 @@
   </script>
 </body>
 </html>
+
+
+
+
+
+

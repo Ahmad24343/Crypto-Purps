@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Purps Crypto - Login/Registrierung</title>
+  <title>Royal Crypto - Login/Registrierung</title>
   <style>
     * {
       margin: 0;
@@ -12,7 +12,7 @@
     }
 
     body {
-      background: linear-gradient(135deg, #0f0620 0%, #1a0033 50%, #0f0620 100%);
+      background: linear-gradient(135deg, #000000 0%, #000000 50%, #000000 100%);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
       display: flex;
@@ -22,29 +22,27 @@
     }
 
     .container {
-      background: linear-gradient(135deg, rgba(15, 6, 32, 0.95) 0%, rgba(26, 0, 51, 0.95) 100%);
-      border: 1px solid rgba(139, 79, 191, 0.4);
+      background: linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(15, 15, 15, 0.95) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.4);
       border-radius: 20px;
       padding: 50px 40px;
       width: 100%;
       max-width: 420px;
-      box-shadow: 0 25px 65px rgba(139, 79, 191, 0.3);
+      box-shadow: 0 25px 65px rgba(0, 0, 0, 0.3);
       backdrop-filter: blur(10px);
     }
 
     h1 {
       text-align: center;
-      color: #FF6B9D;
+      color: #D4AF37;
       font-size: 32px;
       margin-bottom: 10px;
-      text-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
+      text-shadow: 0 0 20px rgba(212, 175, 55, 0.45);
       letter-spacing: 2px;
       font-weight: 800;
     }
 
-    .subtitle {
-      text-align: center;
-      color: #9B6BA8;
+    \.subtitle { text-align: center; color: #ffffff;
       font-size: 14px;
       margin-bottom: 30px;
       font-style: italic;
@@ -56,7 +54,7 @@
 
     label {
       display: block;
-      color: #FF6B9D;
+      color: #D4AF37;
       font-weight: bold;
       margin-bottom: 8px;
       font-size: 14px;
@@ -65,22 +63,21 @@
     input {
       width: 100%;
       padding: 12px;
-      background: rgba(50, 30, 80, 0.8);
-      border: 1px solid #8B4FBF;
+      background: rgba(30, 30, 30, 0.8);
+      border: 1px solid #000000;
       border-radius: 8px;
       color: #fff;
       font-size: 14px;
       transition: border-color 0.3s;
     }
 
-    input::placeholder {
-      color: #9B6BA8;
+    input::placeholder { color: #ffffff;
     }
 
     input:focus {
       outline: none;
-      border-color: #FF6B9D;
-      box-shadow: 0 0 15px rgba(255, 107, 157, 0.3);
+      border-color: #D4AF37;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
     }
 
     .button-group {
@@ -101,29 +98,30 @@
     }
 
     .btn-login {
-      background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%);
+      background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
       color: #000;
       font-weight: 700;
     }
 
     .btn-login:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
+      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
     }
 
     .btn-register {
-      background: linear-gradient(135deg, #4FBF8B 0%, #2FA860 100%);
-      color: #fff;
+      background: linear-gradient(135deg, #111111 0%, #2d2306 100%);
+      color: #FFD700;
       font-weight: 700;
+      border: 1px solid rgba(212, 175, 55, 0.25);
     }
 
     .btn-register:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(79, 191, 139, 0.4);
+      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
     }
 
     .error {
-      color: #FF6B9D;
+      color: #D4AF37;
       font-size: 12px;
       margin-top: 5px;
       display: none;
@@ -134,7 +132,7 @@
     }
 
     .success {
-      color: #4FBF8B;
+      color: #D4AF37;
       font-size: 12px;
       margin-top: 5px;
       display: none;
@@ -147,12 +145,12 @@
     .toggle-form {
       text-align: center;
       margin-top: 20px;
-      color: #9B6BA8;
+      color: #ffffff;
       font-size: 13px;
     }
 
     .toggle-form a {
-      color: #FF6B9D;
+      color: #D4AF37;
       cursor: pointer;
       text-decoration: none;
       font-weight: bold;
@@ -172,7 +170,7 @@
 
     .form-title {
       text-align: center;
-      color: #FF6B9D;
+      color: #D4AF37;
       font-size: 20px;
       margin-bottom: 25px;
       font-weight: bold;
@@ -185,7 +183,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>PURPS CRYPTO</h1>
+    <h1>ROYAL CRYPTO</h1>
     <p class="subtitle">Authentifizierung erforderlich</p>
 
     <!-- Login Form -->
@@ -193,13 +191,13 @@
       <div class="form-title">Anmelden</div>
       <div class="form-group">
         <label>👤 Benutzername:</label>
-        <input type="text" id="loginUsername" placeholder="Max Mustermann">
+        <input type="text" id="loginUsername" placeholder="z.B. Max Mustermann">
         <div class="error" id="loginUsernameError"></div>
       </div>
 
       <div class="form-group">
-        <label>� 5-stellige Handynummer:</label>
-        <input type="text" id="loginPhone" placeholder="z. B. 12345">
+        <label>📞 Telefonnummer:</label>
+        <input type="text" id="loginPhone" placeholder="z.B. 0171 1234567">
         <div class="error" id="loginPhoneError"></div>
       </div>
 
@@ -224,7 +222,7 @@
       <div class="form-title">Registrieren</div>
       <div class="form-group">
         <label>👤 Benutzername:</label>
-        <input type="text" id="registerUsername" placeholder="Max Mustermann">
+        <input type="text" id="registerUsername" placeholder="z.B. Max Mustermann">
         <div class="error" id="registerUsernameError"></div>
       </div>
 
@@ -235,8 +233,8 @@
       </div>
 
       <div class="form-group">
-        <label>📱 5-stellige Handynummer:</label>
-        <input type="text" id="registerPhone" placeholder="z. B. 12345">
+        <label>� Telefonnummer:</label>
+        <input type="text" id="registerPhone" placeholder="z.B. 0171 1234567">
         <div class="error" id="registerPhoneError"></div>
       </div>
 
@@ -277,6 +275,58 @@
       });
     }
 
+    function runningStatically() {
+      return location.hostname.endsWith('github.io') || location.protocol === 'file:';
+    }
+
+    async function tryParseJson(response) {
+      const text = await response.text();
+      if (!text) return null;
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function getDashboardPath() {
+      return 'dashboard.html';
+    }
+
+    function goToDashboard() {
+      if (runningStatically()) {
+        window.location.href = getDashboardPath();
+      } else {
+        window.location.href = '/dashboard';
+      }
+    }
+
+    function offlineLogin(username, phone, password) {
+      const users = JSON.parse(localStorage.getItem('offlineUsers') || '[]');
+      const user = users.find(u => u.username === username && u.phone === phone && u.password === password);
+      if (!user) return false;
+      localStorage.setItem('offlineCurrentUser', username);
+      goToDashboard();
+      return true;
+    }
+
+    function offlineRegister(username, password, phone) {
+      const users = JSON.parse(localStorage.getItem('offlineUsers') || '[]');
+      if (users.find(u => u.username === username || u.phone === phone)) {
+        showError('registerUsernameError', 'Benutzername oder Telefonnummer existiert bereits');
+        return true;
+      }
+      users.push({ username, password, phone, balance: 0, is_admin: false });
+      localStorage.setItem('offlineUsers', JSON.stringify(users));
+      document.getElementById('registerSuccess').classList.add('show');
+      document.getElementById('registerSuccess').textContent = 'Registrierung erfolgreich! Du kannst dich jetzt anmelden.';
+      setTimeout(() => {
+        toggleForm();
+        document.getElementById('loginUsername').value = username;
+      }, 1500);
+      return true;
+    }
+
     async function login() {
       clearErrors();
       const username = document.getElementById('loginUsername').value;
@@ -296,6 +346,18 @@
         return;
       }
 
+      if (runningStatically()) {
+        const users = JSON.parse(localStorage.getItem('offlineUsers') || '[]');
+        const user = users.find(u => u.username === username && u.phone === phone && u.password === password);
+        if (user) {
+          localStorage.setItem('offlineCurrentUser', username);
+          window.location.href = '/dashboard.html';
+        } else {
+          showError('loginUsernameError', 'Ungültige Anmeldedaten (offline)');
+        }
+        return;
+      }
+
       try {
         const response = await fetch('/api/login', {
           method: 'POST',
@@ -303,15 +365,21 @@
           body: JSON.stringify({ username, phone, password })
         });
 
-        const data = await response.json();
+        const data = await tryParseJson(response);
 
         if (response.ok) {
-          window.location.href = '/dashboard';
-        } else {
+          goToDashboard();
+        } else if (data) {
           showError('loginUsernameError', data.error || 'Login fehlgeschlagen');
+        } else if (offlineLogin(username, phone, password)) {
+          return;
+        } else {
+          showError('loginUsernameError', 'Server nicht erreichbar. Bitte Backend hosten oder lokal starten.');
         }
       } catch (error) {
-        showError('loginUsernameError', 'Fehler: ' + error.message);
+        if (!offlineLogin(username, phone, password)) {
+          showError('loginUsernameError', 'Server nicht erreichbar. Bitte Backend hosten oder lokal starten.');
+        }
       }
     }
 
@@ -329,8 +397,25 @@
         showError('registerPasswordError', 'Passwort erforderlich');
         return;
       }
-      if (!phone || !/^\d{5}$/.test(phone)) {
-        showError('registerPhoneError', 'Gültige 5-stellige Nummer erforderlich');
+      if (!phone || !/^\d{5,15}$/.test(phone)) {
+        showError('registerPhoneError', 'Gültige Telefonnummer erforderlich');
+        return;
+      }
+
+      if (runningStatically()) {
+        const users = JSON.parse(localStorage.getItem('offlineUsers') || '[]');
+        if (users.find(u => u.username === username || u.phone === phone)) {
+          showError('registerUsernameError', 'Benutzername oder Telefonnummer existiert bereits');
+          return;
+        }
+        users.push({ username, password, phone, balance: 0, is_admin: false });
+        localStorage.setItem('offlineUsers', JSON.stringify(users));
+        document.getElementById('registerSuccess').classList.add('show');
+        document.getElementById('registerSuccess').textContent = 'Registrierung erfolgreich! Du kannst dich jetzt anmelden.';
+        setTimeout(() => {
+          toggleForm();
+          document.getElementById('loginUsername').value = username;
+        }, 1500);
         return;
       }
 
@@ -341,7 +426,7 @@
           body: JSON.stringify({ username, password, phone })
         });
 
-        const data = await response.json();
+        const data = await tryParseJson(response);
 
         if (response.ok) {
           document.getElementById('registerSuccess').classList.add('show');
@@ -350,11 +435,17 @@
             toggleForm();
             document.getElementById('loginUsername').value = username;
           }, 1500);
+        } else if (data) {
+          showError('registerUsernameError', (data && data.error) || 'Registrierung fehlgeschlagen');
+        } else if (offlineRegister(username, password, phone)) {
+          return;
         } else {
-          showError('registerUsernameError', data.error || 'Registrierung fehlgeschlagen');
+          showError('registerUsernameError', 'Server nicht erreichbar. Bitte Backend hosten oder lokal starten.');
         }
       } catch (error) {
-        showError('registerUsernameError', 'Fehler: ' + error.message);
+        if (!offlineRegister(username, password, phone)) {
+          showError('registerUsernameError', 'Server nicht erreichbar. Bitte Backend hosten oder lokal starten.');
+        }
       }
     }
 
@@ -378,3 +469,9 @@
   </script>
 </body>
 </html>
+
+
+
+
+
+
